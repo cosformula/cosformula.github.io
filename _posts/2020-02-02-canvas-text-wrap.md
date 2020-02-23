@@ -1,6 +1,6 @@
 ---
 layout: article
-title: HTML canvas中文本换行的问题
+title: HTML canvas中文本换行的问题【WIP】
 date: 2020-02-20 18:59:00 +0800
 aside:
   toc: true
@@ -9,6 +9,8 @@ aside:
 # mermaid: true
 # chart: true
 ---
+
+**这篇文章还未完工，目前仅供测试**
 
 HTML canvas绘制文本时不支持换行，一般情况下可以通过`html2canvas`解决复杂的文本排版，但html2canvas在小程序或Node canvas环境下不可用。
 
