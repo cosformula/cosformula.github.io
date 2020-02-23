@@ -4,6 +4,7 @@ title: HTML canvas中文本换行的问题
 date: 2020-02-20 18:59:00 +0800
 aside:
   toc: true
+_includes: assets
 # mathjax: true
 # mathjax_autoNumber: true
 # mermaid: true
