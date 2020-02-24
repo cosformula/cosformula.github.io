@@ -1,0 +1,15 @@
+name: CI
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: GHA Jekyll Build
+        uses: gha-utilities/jekyll-build@v0.0.2
+        with:
+          # Relative path that source files for Jekyll to build exsist
+          destination: dist
