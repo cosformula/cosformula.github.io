@@ -1,0 +1,13 @@
+{
+  "name": "css-line-break",
+  "scripts": {
+    "dev": "parcel index.html",
+    "build": "parcel build index.html"
+  },
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "css-line-break": "^1.1.1"
+  }
+}

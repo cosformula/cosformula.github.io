@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2020-02-24T15:13:53+00:00</updated><id>/feed.xml</id><title type="html">cosformula</title><subtitle># Your Site Description
+</subtitle><author><name>cosformula</name></author><entry><title type="html">HTML canvas中文本换行的问题【WIP】</title><link href="/2020/02/20/canvas-text-wrap.html" rel="alternate" type="text/html" title="HTML canvas中文本换行的问题【WIP】" /><published>2020-02-20T10:59:00+00:00</published><updated>2020-02-20T10:59:00+00:00</updated><id>/2020/02/20/canvas-text-wrap</id><content type="html" xml:base="/2020/02/20/canvas-text-wrap.html">&lt;p&gt;&lt;strong&gt;这篇文章还未完工，目前仅供测试&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;HTML canvas绘制文本时不支持换行，一般情况下可以通过&lt;code class=&quot;highlighter-rouge&quot;&gt;html2canvas&lt;/code&gt;解决复杂的文本排版，但html2canvas在小程序或Node canvas环境下不可用。&lt;/p&gt;
+
+&lt;p&gt;这篇文章介绍了通过canvas文本渲染的基础知识、自动换行的两种算法、在换行时遵守排版规则、如何支持文本居中/字体缩放、以及html2canvas如何正确渲染文本。&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;h2 id=&quot;基础知识&quot;&gt;基础知识&lt;/h2&gt;
+
+&lt;p&gt;这章将介绍canvas2D文本绘制的一些基础知识，如果你对这些已经很熟悉可以跳过。&lt;/p&gt;
+
+&lt;p&gt;Canvas2D 环境中，可以使用&lt;code class=&quot;highlighter-rouge&quot;&gt;fillText&lt;/code&gt;API 来绘制文本。该 API 的语法如下：&lt;/p&gt;
+
+&lt;div class=&quot;language-javascript highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;ctx&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;fillText&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;text&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;y&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;maxWidth&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;text&lt;/code&gt;是所要绘制的字符串，&lt;code class=&quot;highlighter-rouge&quot;&gt;x&lt;/code&gt;和&lt;code class=&quot;highlighter-rouge&quot;&gt;y&lt;/code&gt;为文本起点的坐标，可选参数&lt;code class=&quot;highlighter-rouge&quot;&gt;maxWidth&lt;/code&gt;为绘制的最大宽度。&lt;/p&gt;
+
+&lt;p&gt;如果指定了 maxWidth，绘制字符串实际渲染长度超出&lt;code class=&quot;highlighter-rouge&quot;&gt;maxWidth&lt;/code&gt;时，文本会进行自适应缩放。&lt;/p&gt;
+
+&lt;p&gt;可以在下面的 codepen 里体验三个参数的作用。&lt;/p&gt;
+
+&lt;div&gt;&lt;div class=&quot;extensions extensions--demo&quot;&gt;
+    &lt;iframe src=&quot;//codepen.io/cosformula/embed/XWbNqbJ/?theme-id=0&amp;amp;default-tab=result&quot; frameborder=&quot;0&quot; scrolling=&quot;no&quot; allowfullscreen=&quot;&quot;&gt;&lt;/iframe&gt;
+&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;fillText&lt;/code&gt;仅支持绘制单行文本，文本超出绘制范围仍然会继续绘制，而&lt;code class=&quot;highlighter-rouge&quot;&gt;\n&lt;/code&gt;也会被视为空白字符。幸好 Canvas2D 还提供了&lt;code class=&quot;highlighter-rouge&quot;&gt;mesaureText&lt;/code&gt;API，语法如下：&lt;/p&gt;
+
+&lt;div class=&quot;language-javascript highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nx&quot;&gt;ctx&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;measureText&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;text&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;参数&lt;code class=&quot;highlighter-rouge&quot;&gt;text&lt;/code&gt;为要测量的字符串，该方法会返回&lt;code class=&quot;highlighter-rouge&quot;&gt;TextMetrics&lt;/code&gt;对象，&lt;code class=&quot;highlighter-rouge&quot;&gt;TextMetrics&lt;/code&gt;对象包含&lt;code class=&quot;highlighter-rouge&quot;&gt;width&lt;/code&gt;属性。通过这样的代码可以测量指定字符串绘制后的宽度。&lt;/p&gt;
+
+&lt;div class=&quot;language-javascript highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;text&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;ctx&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;measureText&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;foo&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// TextMetrics object&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;text&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;width&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// 16;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;贪心算法&quot;&gt;贪心算法&lt;/h2&gt;
+
+&lt;p&gt;自动换行的简单实现是使用贪心算法，该实现的核心思路是将尽可能多的字符放入一行，直到所有的字符都放进去。&lt;/p&gt;
+
+&lt;p&gt;使用一个变量作为缓冲区，代表当前渲染的文本行，依次在缓冲区内填充字符，并使用&lt;code class=&quot;highlighter-rouge&quot;&gt;measureText&lt;/code&gt;计算当前缓冲区的实际渲染宽度，当渲染宽度大于设定宽度时，文本应当在填充当前字符的前一位置换行，将缓冲区文本作为一行加入列表并清空缓冲区。重复以上过程，直到所有的字符都被放入。&lt;/p&gt;
+
+&lt;p&gt;按照这样的思路将文本处理为换行后的字符串列表，列表中的每一项都代表实际渲染的单行文本，最后再调用&lt;code class=&quot;highlighter-rouge&quot;&gt;fillText&lt;/code&gt;依次渲染即可。&lt;/p&gt;
+
+&lt;div class=&quot;language-javascript highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;text&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;Hello World&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;// 计算文本应当在何时换行，返回换行处理后的字符串列表&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;calculateTextWrapLines&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;ctx&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;text&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;width&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;lines&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[]&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;currentLineText&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;''&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;text&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;length&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;currentLineText&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;text&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;width&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;measuredWidth&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;ctx&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;measureText&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;currentLineText&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;measuredWidth&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;width&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;c1&quot;&gt;// 文本应当在填充当前字符的前一位置换行，所以跳过最后一个字符&lt;/span&gt;
+      &lt;span class=&quot;nx&quot;&gt;lines&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;push&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;currentLineText&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;slice&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;currentLineText&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;length&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+      &lt;span class=&quot;c1&quot;&gt;// 最后一个字符是下一行的行首&lt;/span&gt;
+      &lt;span class=&quot;nx&quot;&gt;currentLineText&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;currentLineText&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;currentLineText&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;length&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;// 循环结束时，可能还有字符在缓冲区，把剩下的字符当作最后一行&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;currentLineText&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;length&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;lines&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;push&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;currentLineText&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;lines&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;// 调用换行处理函数处理文本换行，&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;fillTextWrap&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;ctx&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;text&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;width&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;})&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;// 支持换行符&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;paragraphs&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;text&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;split&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;// 将\n分割后的段落交给calculateTextWrapLines处理为换行后的字符串列表&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;lines&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;paragraphs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;reduce&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;acc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;cur&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;acc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;push&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(...&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;calculateTextWrapLines&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;ctx&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;cur&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;width&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;acc&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;},&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[])&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;lines&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;line&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;index&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;// 绘制单行文本，这里使用了lineHeight计算第x行文本的y位置&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;ctx&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;fillText&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;line&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;y&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;index&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;ctx&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;lineHeight&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;})&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;nx&quot;&gt;ctx&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;font&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;12px sans&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;ctx&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;lineHeight&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;14&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;// textBaseline改为top是为了使y的表现与HTML一致，默认情况下，fillText的y指的是文本基线的位置&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;ctx&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;textBaseline&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;top&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;fillTextWrap&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;ctx&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;text&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;width&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;300&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;})&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;效果预览，左：div，右：canvas 实现，完整的示例代码可以&lt;a href=&quot;https://codepen.io/cosformula/pen/MWwbVqL&quot;&gt;在这里看到&lt;/a&gt;。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/canvas-text-wrap/naive-example.png&quot; alt=&quot;效果预览&quot; class=&quot;shadow&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;最小破损度算法&quot;&gt;最小破损度算法&lt;/h2&gt;
+
+&lt;h2 id=&quot;排版优化&quot;&gt;排版优化&lt;/h2&gt;
+
+&lt;p&gt;上面的方法已经可以使用，但如果你足够细心，可能会发现canvas实际渲染的效果和HTML的渲染结果有些不一样，canvas渲染的结果会稍显怪异。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/canvas-text-wrap/naive-example-difference.png&quot; alt=&quot;两种实现的区别&quot; class=&quot;shadow&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;怪异的原因是我们在换行的过程中没有遵循排版规则。如果你对语文还有印象，可能会记得在作文纸上书写标点符号的一些规则，例如&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;句号、逗号、顿号…不出现在一行之首&lt;br /&gt;…引号、括号、书名号…前一半不出现在一行之末，后一半不出现在一行之首&lt;br /&gt;—— &lt;a href=&quot;http://www.moe.gov.cn/ewebeditor/uploadfile/2015/01/13/20150113091548267.pdf&quot;&gt;《标点符号用法》&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;英文也有类似的规则，例如单词之间不应当随意换行，需要空到下一行书写或者加破折号。实际上，对于Unicode，这些规则已经在&lt;a href=&quot;http://unicode.org/reports/tr14/&quot;&gt;Unicode Line Breaking Algorithm (UAX #14)&lt;/a&gt;中给出。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Unicode Line Breaking Algorithm&lt;/strong&gt;确认了这样的算法规则：给定输入文本，该算法将产生被称为&lt;strong&gt;break opportunities&lt;/strong&gt;的一组位置，这些位置能够作为行首而不会违反各种语言的排版规则，不过实际换行位置需要根据更高层的应用软件另行确认。&lt;/p&gt;
+
+&lt;p&gt;那么浏览器中文本换行规则是怎样的？&lt;a href=&quot;https://www.w3.org/TR/css-text-3/#line-breaking&quot;&gt;CSS Text Module Level 3&lt;/a&gt;定义了文本换行的表现，当文本因为内容溢出而换行被称作软换行（soft line break）.break opportunities称为&lt;strong&gt;soft wrap opportunities&lt;/strong&gt;，但可以沿用Unicode Line Breaking Algorithm来计算soft wrap opportunities。&lt;/p&gt;
+
+&lt;p&gt;Unicode Line Breaking Algorithm有非常多的规则，实现一遍是个艰巨的任务，幸好有人已经做过并将它开源：&lt;a href=&quot;https://github.com/niklasvh/css-line-break&quot;&gt;niklasvh/css-line-break&lt;/a&gt;，这个库除了实现Unicode Line Breaking Algorithm还支持CSS中wordBreak的选项。&lt;/p&gt;
+
+&lt;p&gt;使用css-line-break库，我们可以进一步优化代码使其渲染的文本更贴近浏览器渲染结果了。在下面的代码中新建了&lt;code class=&quot;highlighter-rouge&quot;&gt;calculateTextWrapLinesULB&lt;/code&gt;用于替换上一节的&lt;code class=&quot;highlighter-rouge&quot;&gt;calculateTextWrapLines&lt;/code&gt;。&lt;/p&gt;
+
+&lt;div class=&quot;language-javascript highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;LineBreaker&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;css-line-break&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;// 代码基本逻辑相同，不再注释&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;calculateTextWrapLinesULB&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;ctx&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;text&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;width&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;lines&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[]&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;currentLineWords&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[]&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;breaker&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;LineBreaker&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;text&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;lineBreak&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;strict&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;wordBreak&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;normal&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;})&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;bk&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;while&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;!&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;bk&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;breaker&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;next&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()).&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;done&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;word&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;bk&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;slice&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;currentLineWords&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;push&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;word&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;width&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;measuredWidth&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;ctx&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;measureText&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;currentLineWords&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;join&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;''&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;measuredWidth&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;width&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;nx&quot;&gt;lines&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;push&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;currentLineWords&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;slice&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;currentLineWords&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;length&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;join&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;''&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+        &lt;span class=&quot;nx&quot;&gt;currentLineWords&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;currentLineWords&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;currentLineWords&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;length&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]]&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;currentLineWords&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;length&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;lines&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;push&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;currentLineWords&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;join&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;''&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;lines&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;效果预览，左：div，右：canvas 实现。可以看出虽然渲染出来还是有些许区别，但是已经不会违反最基本的排版规则。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/canvas-text-wrap/ULB-example.png&quot; alt=&quot;效果预览&quot; class=&quot;shadow&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;需要注意的是，css-line-break大量的排版规则使得它的体积稍微有些大（压缩前80KB），html2canvas体积大（压缩后40KB）的原因也是因为依赖了css-line-break。&lt;/p&gt;
+
+&lt;h2 id=&quot;限制最大行数&quot;&gt;限制最大行数&lt;/h2&gt;
+
+&lt;p&gt;我们已经在canvas里支持了文本换行，并且能够较好的符合排版规则。&lt;/p&gt;
+
+&lt;p&gt;##&lt;/p&gt;
+
+&lt;!-- ## 效率优化？ --&gt;
+
+&lt;h2 id=&quot;html2canvas文本排版解析&quot;&gt;html2canvas文本排版解析&lt;/h2&gt;
+
+&lt;p&gt;html2canvas有两种渲染模式，一种是解析Dom节点再绘制到canvas，还有一种是利用svg的foreignObject绘制网页到svg，再将svg绘制到canvas。foreignObject模式原理比较简单，不做更多介绍。&lt;/p&gt;
+
+&lt;p&gt;在纯canvas模式下，html2canvas巧妙地利用了浏览器的渲染结果，首先使用&lt;a href=&quot;https://github.com/niklasvh/css-line-break&quot;&gt;css-line-break库&lt;/a&gt;将文本根据&lt;strong&gt;break opportunities&lt;/strong&gt;分割为最小渲染节点，再利用&lt;code class=&quot;highlighter-rouge&quot;&gt;createRange&lt;/code&gt;API选中该文本节点，随后通过&lt;code class=&quot;highlighter-rouge&quot;&gt;getBoundingClientRect&lt;/code&gt;获取该文本节点的定位信息。这样保证了文本渲染结果与浏览器渲染结果基本一致。&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;https://github.com/niklasvh/html2canvas/blob/522a4430559f9cdb8b5d5a3ee6db32beaa9d059b/src/dom/text-container.ts&lt;/li&gt;
+  &lt;li&gt;https://github.com/niklasvh/html2canvas/blob/master/src/render/canvas/canvas-renderer.ts&lt;/li&gt;
+  &lt;li&gt;https://github.com/niklasvh/html2canvas/blob/522a4430559f9cdb8b5d5a3ee6db32beaa9d059b/src/css/layout/text.ts#L47&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;使用svg foreignObject再绘制到canvas的方法可以参考&lt;a href=&quot;https://www.zhangxinxu.com/wordpress/2017/08/svg-foreignobject/&quot;&gt;这篇文章&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;参考资料&quot;&gt;参考资料&lt;/h2&gt;
+
+&lt;ul class=&quot;success&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.moe.gov.cn/ewebeditor/uploadfile/2015/01/13/20150113091548267.pdf&quot;&gt;标点符号用法 - GB/T15834-2011 &lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.zhangxinxu.com/wordpress/2018/02/canvas-text-break-line-letter-spacing-vertical/&quot;&gt;canvas文本绘制自动换行、字间距、竖排等实现&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://zh.wikipedia.org/wiki/%E8%87%AA%E5%8A%A8%E6%8D%A2%E8%A1%8C&quot;&gt;自动换行 - wikipedia&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;https://en.wikipedia.org/wiki/Line_wrap_and_word_wrap
+&amp;lt;!– 
+Success Text.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p class=&quot;info&quot;&gt;Info Text.&lt;/p&gt;
+&lt;p class=&quot;warning&quot;&gt;Warning Text.&lt;/p&gt;
+&lt;p class=&quot;error&quot;&gt;Error Text.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;success highlighter-rouge&quot;&gt;success&lt;/code&gt;
+&lt;code class=&quot;info highlighter-rouge&quot;&gt;info&lt;/code&gt;
+&lt;code class=&quot;warning highlighter-rouge&quot;&gt;warning&lt;/code&gt;
+&lt;code class=&quot;error highlighter-rouge&quot;&gt;error&lt;/code&gt;&lt;/p&gt;
+
+&lt;div&gt;&lt;div class=&quot;extensions extensions--demo&quot;&gt;
+    &lt;iframe src=&quot;//codepen.io/cosformula/embed/MWwbVqL/?theme-id=0&amp;amp;default-tab=result&quot; frameborder=&quot;0&quot; scrolling=&quot;no&quot; allowfullscreen=&quot;&quot;&gt;&lt;/iframe&gt;
+&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;http://www.rozmichelle.com/kami2/
+When &lt;script type=&quot;math/tex&quot;&gt;a \ne 0&lt;/script&gt;, there are two solutions to &lt;script type=&quot;math/tex&quot;&gt;ax^2 + bx + c = 0&lt;/script&gt; and they are
+&lt;script type=&quot;math/tex&quot;&gt;x_1 = {-b + \sqrt{b^2-4ac} \over 2a}&lt;/script&gt;
+&lt;script type=&quot;math/tex&quot;&gt;x_2 = {-b - \sqrt{b^2-4ac} \over 2a} \notag&lt;/script&gt; –&amp;gt;&lt;/p&gt;</content><author><name>cosformula</name></author><summary type="html">这篇文章还未完工，目前仅供测试 HTML canvas绘制文本时不支持换行，一般情况下可以通过html2canvas解决复杂的文本排版，但html2canvas在小程序或Node canvas环境下不可用。 这篇文章介绍了通过canvas文本渲染的基础知识、自动换行的两种算法、在换行时遵守排版规则、如何支持文本居中/字体缩放、以及html2canvas如何正确渲染文本。</summary></entry><entry><title type="html">Hello World</title><link href="/2019/08/14/hello-world.html" rel="alternate" type="text/html" title="Hello World" /><published>2019-08-14T13:21:40+00:00</published><updated>2019-08-14T13:21:40+00:00</updated><id>/2019/08/14/hello-world</id><content type="html" xml:base="/2019/08/14/hello-world.html">&lt;p&gt;我好了。&lt;/p&gt;</content><author><name>cosformula</name></author><summary type="html">我好了。</summary></entry></feed>
