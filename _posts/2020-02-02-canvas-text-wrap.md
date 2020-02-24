@@ -189,7 +189,7 @@ html2canvas有两种渲染模式，一种是解析Dom节点再绘制到canvas，
 - [标点符号用法 - GB/T15834-2011 ](http://www.moe.gov.cn/ewebeditor/uploadfile/2015/01/13/20150113091548267.pdf)
 - [canvas文本绘制自动换行、字间距、竖排等实现](https://www.zhangxinxu.com/wordpress/2018/02/canvas-text-break-line-letter-spacing-vertical/)
 - [自动换行 - wikipedia](https://zh.wikipedia.org/wiki/%E8%87%AA%E5%8A%A8%E6%8D%A2%E8%A1%8C)
-
+- https://en.wikipedia.org/wiki/Line_wrap_and_word_wrap
 <!-- 
 Success Text.
 {:.success}
