@@ -22,4 +22,4 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.S3_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.S3_KEY }}
           SOURCE_DIR: 'docs'      # optional: defaults to entire repository
-          AWS_S3_ENDPOINT: ${{ secrets.ENDPOINT }}
+          AWS_S3_ENDPOINT: ${{ secrets.S3_ENDPOINT }}
