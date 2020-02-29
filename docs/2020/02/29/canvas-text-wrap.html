@@ -1,10 +1,10 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html><html lang="zh-Hans">
   <head><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><title>HTML canvas中文本换行的问题【WIP】 - cosformula</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><title>HTML canvas中文本换行的问题 - cosformula</title>
 
-<meta name="description" content="这篇文章还未完工，目前仅供测试HTML canvas绘制文本时不支持换行，一般情况下可以通过html2canvas解决复杂的文本排版，但html2canvas在小程序或Node canvas环境下不可用。这篇文章介绍了通过canvas文本渲染的基础知识、自动换行的两种算法、在换行时遵守排版规则、如何支持文本居中/...">
-<link rel="canonical" href="/2020/02/20/canvas-text-wrap.html"><link rel="alternate" type="application/rss+xml" title="cosformula" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
+<meta name="description" content="HTML canvas 绘制文本时不支持换行，一般情况下可以通过 html2canvas 解决复杂的文本排版，但 html2canvas 不能在小程序或 Node canvas 环境下使用。这篇文章介绍了 canvas 文本渲染的基础知识、贪心算法实现自动换行、Unicode 换行算法/CSS 标准中的换行以及 ...">
+<link rel="canonical" href="/2020/02/29/canvas-text-wrap.html"><link rel="alternate" type="application/rss+xml" title="cosformula" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
 
 <meta name="msapplication-TileColor" content="#ffc40d"><meta name="msapplication-config" content="/assets/browserconfig.xml">
 
@@ -268,7 +268,7 @@
 </svg>
 <a title="# Your Site Description
 " href="/">cosformula</a></div><button class="button button--secondary button--circle search-button js-search-toggle"><i class="fas fa-search"></i></button></div><nav class="navigation">
-        <ul><li class="navigation__item"><a href="/">Home</a></li><li class="navigation__item"><a href="/archive.html">Archive</a></li><li class="navigation__item"><a href="/about.html">About</a></li><li><button class="button button--secondary button--circle search-button js-search-toggle"><i class="fas fa-search"></i></button></li></ul>
+        <ul><li class="navigation__item"><a href="/">主页</a></li><li class="navigation__item"><a href="/archive.html">归档</a></li><li class="navigation__item"><a href="/about.html">关于</a></li><li><button class="button button--secondary button--circle search-button js-search-toggle"><i class="fas fa-search"></i></button></li></ul>
       </nav></div>
   </header>
 </div><div class="page__content"><div class ="main"><div class="grid grid--reverse">
@@ -279,25 +279,23 @@
               <div class="col-main cell cell--auto"><!-- start custom main top snippet -->
 
 <!-- end custom main top snippet -->
-<article itemscope itemtype="http://schema.org/Article"><div class="article__header"><header><h1>HTML canvas中文本换行的问题【WIP】</h1></header><span class="split-space">&nbsp;</span>
+<article itemscope itemtype="http://schema.org/Article"><div class="article__header"><header><h1>HTML canvas中文本换行的问题</h1></header><span class="split-space">&nbsp;</span>
           <a class="edit-on-github"
-            title="Edit on Github"
+            title="在 Github 上修改"
             href="https://github.com/cosformula/cosformula.org/tree/master/_posts/2020-02-02-canvas-text-wrap.md">
-            <i class="far fa-edit"></i></a></div><meta itemprop="headline" content="HTML canvas中文本换行的问题【WIP】"><div class="article__info clearfix"><ul class="right-col menu"><li><i class="far fa-calendar-alt"></i> <span>Feb 20, 2020</span>
-            </li></ul></div><meta itemprop="author" content="cosformula"/><meta itemprop="datePublished" content="2020-02-20T10:59:00+00:00"><div class="js-article-content"><div class="layout--article"><!-- start custom article top snippet -->
+            <i class="far fa-edit"></i></a></div><meta itemprop="headline" content="HTML canvas中文本换行的问题"><div class="article__info clearfix"><ul class="right-col menu"><li><i class="far fa-calendar-alt"></i> <span>2020年 02月29日</span>
+            </li></ul></div><meta itemprop="author" content="cosformula"/><meta itemprop="datePublished" content="2020-02-29T15:11:00+00:00"><div class="js-article-content"><div class="layout--article"><!-- start custom article top snippet -->
 
 <!-- end custom article top snippet -->
-<div class="article__content" itemprop="articleBody"><p><strong>这篇文章还未完工，目前仅供测试</strong></p>
+<div class="article__content" itemprop="articleBody"><p>HTML canvas 绘制文本时不支持换行，一般情况下可以通过 html2canvas 解决复杂的文本排版，但 html2canvas 不能在小程序或 Node canvas 环境下使用。</p>
 
-<p>HTML canvas绘制文本时不支持换行，一般情况下可以通过<code class="highlighter-rouge">html2canvas</code>解决复杂的文本排版，但html2canvas在小程序或Node canvas环境下不可用。</p>
-
-<p>这篇文章介绍了通过canvas文本渲染的基础知识、自动换行的两种算法、在换行时遵守排版规则、如何支持文本居中/字体缩放、以及html2canvas如何正确渲染文本。</p>
+<p>这篇文章介绍了 canvas 文本渲染的基础知识、贪心算法实现自动换行、Unicode 换行算法/CSS 标准中的换行以及 html2canvas 能够正确渲染文本换行的原理。</p>
 
 <!--more-->
 
 <h2 id="基础知识">基础知识</h2>
 
-<p>这章将介绍canvas2D文本绘制的一些基础知识，如果你对这些已经很熟悉可以跳过。</p>
+<p>这章将介绍 canvas2D 文本绘制的一些基础知识，如果你对这些已经很熟悉可以跳过。</p>
 
 <p>Canvas2D 环境中，可以使用<code class="highlighter-rouge">fillText</code>API 来绘制文本。该 API 的语法如下：</p>
 
@@ -325,32 +323,37 @@
 <span class="nx">text</span><span class="p">.</span><span class="nx">width</span> <span class="c1">// 16;</span>
 </code></pre></div></div>
 
-<h2 id="贪心算法">贪心算法</h2>
+<h2 id="使用贪心算法实现自动换行">使用贪心算法实现自动换行</h2>
 
-<p>自动换行的简单实现是使用贪心算法，该实现的核心思路是将尽可能多的字符放入一行，直到所有的字符都放进去。</p>
+<p>自动换行的简单实现是使用贪心算法，核心思路是将尽可能多的字符放入一行，直到所有的字符都放进去。</p>
 
-<p>使用一个变量作为缓冲区，代表当前渲染的文本行，依次在缓冲区内填充字符，并使用<code class="highlighter-rouge">measureText</code>计算当前缓冲区的实际渲染宽度，当渲染宽度大于设定宽度时，文本应当在填充当前字符的前一位置换行，将缓冲区文本作为一行加入列表并清空缓冲区。重复以上过程，直到所有的字符都被放入。</p>
+<!-- 使用一个变量作为缓冲区，代表当前渲染的文本行，依次在缓冲区内填充字符，并使用`measureText`计算当前缓冲区的实际渲染宽度，当渲染宽度大于设定宽度时，文本应当在填充当前字符的前一位置换行，将缓冲区文本作为一行加入列表并清空缓冲区。重复以上过程，直到所有的字符都被放入。 -->
 
 <p>按照这样的思路将文本处理为换行后的字符串列表，列表中的每一项都代表实际渲染的单行文本，最后再调用<code class="highlighter-rouge">fillText</code>依次渲染即可。</p>
 
 <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">text</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">Hello World</span><span class="dl">'</span>
 
 <span class="c1">// 计算文本应当在何时换行，返回换行处理后的字符串列表</span>
-<span class="kd">function</span> <span class="nx">calculateTextWrapLines</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">text</span><span class="p">,</span> <span class="nx">width</span><span class="p">)</span> <span class="p">{</span>
+<span class="kd">function</span> <span class="nx">calculateTextWrapLines</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">text</span><span class="p">,</span> <span class="nx">maxWidth</span><span class="p">)</span> <span class="p">{</span>
   <span class="kd">let</span> <span class="nx">lines</span> <span class="o">=</span> <span class="p">[]</span>
-  <span class="kd">let</span> <span class="nx">currentLineText</span> <span class="o">=</span> <span class="dl">''</span>
-  <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">text</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">currentLineText</span> <span class="o">+=</span> <span class="nx">text</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span>
-    <span class="kd">const</span> <span class="p">{</span> <span class="na">width</span><span class="p">:</span> <span class="nx">measuredWidth</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">ctx</span><span class="p">.</span><span class="nx">measureText</span><span class="p">(</span><span class="nx">currentLineText</span><span class="p">)</span>
-    <span class="k">if</span> <span class="p">(</span><span class="nx">measuredWidth</span> <span class="o">&gt;=</span> <span class="nx">width</span><span class="p">)</span> <span class="p">{</span>
-      <span class="c1">// 文本应当在填充当前字符的前一位置换行，所以跳过最后一个字符</span>
-      <span class="nx">lines</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">currentLineText</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nx">currentLineText</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
-      <span class="c1">// 最后一个字符是下一行的行首</span>
-      <span class="nx">currentLineText</span> <span class="o">=</span> <span class="nx">currentLineText</span><span class="p">[</span><span class="nx">currentLineText</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+  <span class="c1">//</span>
+  <span class="kd">let</span> <span class="nx">words</span> <span class="o">=</span> <span class="nx">text</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="dl">''</span><span class="p">)</span>
+  <span class="kd">let</span> <span class="nx">line</span> <span class="o">=</span> <span class="dl">''</span>
+
+  <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">words</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">word</span> <span class="o">=</span> <span class="nx">words</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span>
+    <span class="kd">const</span> <span class="nx">testLine</span> <span class="o">=</span> <span class="nx">line</span> <span class="o">+</span> <span class="nx">word</span>
+    <span class="kd">const</span> <span class="p">{</span> <span class="na">width</span><span class="p">:</span> <span class="nx">measuredWidth</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">ctx</span><span class="p">.</span><span class="nx">measureText</span><span class="p">(</span><span class="nx">testLine</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">measuredWidth</span> <span class="o">&gt;</span> <span class="nx">maxWidth</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">lines</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">line</span><span class="p">)</span>
+      <span class="c1">// 最后一个词是下一行的行首</span>
+      <span class="nx">line</span> <span class="o">=</span> <span class="nx">word</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="nx">line</span> <span class="o">=</span> <span class="nx">testLine</span>
     <span class="p">}</span>
   <span class="p">}</span>
   <span class="c1">// 循环结束时，可能还有字符在缓冲区，把剩下的字符当作最后一行</span>
-  <span class="nx">currentLineText</span><span class="p">.</span><span class="nx">length</span> <span class="o">&amp;&amp;</span> <span class="nx">lines</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">currentLineText</span><span class="p">)</span>
+  <span class="nx">line</span><span class="p">.</span><span class="nx">length</span> <span class="o">&amp;&amp;</span> <span class="nx">lines</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">line</span><span class="p">)</span>
   <span class="k">return</span> <span class="nx">lines</span>
 <span class="p">}</span>
 
@@ -380,122 +383,112 @@
 
 <p><img src="/assets/img/canvas-text-wrap/naive-example.png" alt="效果预览" class="shadow" /></p>
 
-<h2 id="最小破损度算法">最小破损度算法</h2>
+<p>大多数排版软件使用贪心算法，但 TeX 使用<a href="https://en.wikipedia.org/wiki/Line_wrap_and_word_wrap#Minimum_raggedness">最小破损度算法</a>来完成排版，该算法通过尽量减少行末的空白来实现更美观的排版。</p>
 
-<h2 id="排版优化">排版优化</h2>
+<h2 id="unicode-换行算法与-css-换行标准">Unicode 换行算法与 CSS 换行标准</h2>
 
-<p>上面的方法已经可以使用，但如果你足够细心，可能会发现canvas实际渲染的效果和HTML的渲染结果有些不一样，canvas渲染的结果会稍显怪异。</p>
+<p>大部分介绍 canvas 文本换行文章都到此为止，但如果你足够细心，可能会发现 canvas 实际渲染的效果和 HTML 的渲染结果有些不一样，canvas 渲染的结果会稍显怪异。</p>
 
 <p><img src="/assets/img/canvas-text-wrap/naive-example-difference.png" alt="两种实现的区别" class="shadow" /></p>
 
-<p>怪异的原因是我们在换行的过程中没有遵循排版规则。如果你对语文还有印象，可能会记得在作文纸上书写标点符号的一些规则，例如</p>
+<p>这是因为我们在换行时没有遵守排版规则，换行的时候把<code class="highlighter-rouge">。</code>放在了行首。如果你对语文还有印象，可能会记得在作文纸上书写标点符号的一些规则，例如</p>
 
 <blockquote>
   <p>句号、逗号、顿号…不出现在一行之首<br />…引号、括号、书名号…前一半不出现在一行之末，后一半不出现在一行之首<br />—— <a href="http://www.moe.gov.cn/ewebeditor/uploadfile/2015/01/13/20150113091548267.pdf">《标点符号用法》</a></p>
 </blockquote>
 
-<p>英文也有类似的规则，例如单词之间不应当随意换行，需要空到下一行书写或者加破折号。实际上，对于Unicode，这些规则已经在<a href="http://unicode.org/reports/tr14/">Unicode Line Breaking Algorithm (UAX #14)</a>中给出。</p>
+<p>英文也有类似的规则，例如单词之内不应当随意换行，需要空到下一行书写或者加破折号。但我们在文本编辑器或者网页里不需要手动遵守这些规则，这是因为 Unicode 标准已经制定了 Unicode 字符里软换行的表现，而我们应用软件和操作系统在渲染文本的时候已经遵守了这些标准，标准的具体规则在<a href="http://unicode.org/reports/tr14/">Unicode 换行算法 (Unicode Line Breaking Algorithm, UAX #14）</a>中详细给出。</p>
 
-<p><strong>Unicode Line Breaking Algorithm</strong>确认了这样的算法规则：给定输入文本，该算法将产生被称为<strong>break opportunities</strong>的一组位置，这些位置能够作为行首而不会违反各种语言的排版规则，不过实际换行位置需要根据更高层的应用软件另行确认。</p>
+<p>Unicode 换行算法描述了这样的算法：给定输入文本，该算法将产生被称为换行机会（<strong>break opportunities</strong>）的一组位置，换行机会指的是在文本渲染的过程中允许于此处换行，不过实际换行位置需要结合显示窗口宽度和字体大小由更高层的应用软件另行确认。</p>
 
-<p>那么浏览器中文本换行规则是怎样的？<a href="https://www.w3.org/TR/css-text-3/#line-breaking">CSS Text Module Level 3</a>定义了文本换行的表现，当文本因为内容溢出而换行被称作软换行（soft line break）.break opportunities称为<strong>soft wrap opportunities</strong>，但可以沿用Unicode Line Breaking Algorithm来计算soft wrap opportunities。</p>
+<p>该算法的规则大致可分为以下几类。算法中将 Unicode 字符分为不同的换行类（Line Breaking Classes），例如表意文字为一类（如汉字）、左标点为一类（如”[“）、数字前置符号为一类（如”$“）等等。这些字符类本身在换行中有默认表现，如「除非特殊情况下表意文字的前后均可换行」、「左标点符号后禁止换行」。不同字符类组合起来还需遵守另外的规则，例如「在数字和字母之间禁止换行」。除此之外还有类似「永远不在文本的开头换行」、「文本的结尾永远可以换行」、「除禁止换行的位置外都允许换行」的规则。</p>
 
-<p>Unicode Line Breaking Algorithm有非常多的规则，实现一遍是个艰巨的任务，幸好有人已经做过并将它开源：<a href="https://github.com/niklasvh/css-line-break">niklasvh/css-line-break</a>，这个库除了实现Unicode Line Breaking Algorithm还支持CSS中wordBreak的选项。</p>
+<p>我们可以用一个简单的例子说明换行算法的作用：遵循 Unicode 换行算法的规定，给定句子”Hello, world!”，将给出”Hello, <strong>|</strong>world!<strong>|</strong>“（<strong>|</strong>代表换行机会）。根据给出的换行位置，在实际绘制中我们可以先把”Hello, “填充到第一行，如果发现位置不够放”world!”，就把”world!”放到第二行。但是在上文的贪心算法里，我们简单地把每一个字符都视作换行机会，这也导致了奇怪的排版。</p>
 
-<p>使用css-line-break库，我们可以进一步优化代码使其渲染的文本更贴近浏览器渲染结果了。在下面的代码中新建了<code class="highlighter-rouge">calculateTextWrapLinesULB</code>用于替换上一节的<code class="highlighter-rouge">calculateTextWrapLines</code>。</p>
+<p>那么浏览器中文本换行规则是怎样的？CSS 中关于换行表现的属性有”line-break”、”word-break”、”hyphens”和”overflow-wrap”，这些属性在<a href="https://www.w3.org/TR/css-text-3/#line-breaking">CSS Text Module Level 3</a>有详细定义。</p>
+
+<ul>
+  <li><a href="https://developer.mozilla.org/zh-CN/docs/Web/CSS/line-break">line-break</a>：用来处理如何断开带有标点符号的中文、日文或韩文（CJK）文本的行</li>
+  <li><a href="https://developer.mozilla.org/zh-CN/docs/Web/CSS/word-break">word-break</a>：指定怎样在单词内断行</li>
+  <li><a href="https://developer.mozilla.org/zh-CN/docs/Web/CSS/hyphens">hyphens</a>：告知浏览器在换行时如何使用连字符连接单词</li>
+  <li><a href="https://developer.mozilla.org/zh-CN/docs/Web/CSS/word-wrap">overflow-wrap</a>：用来说明当一个不能被分开的字符串太长而不能填充其包裹盒时，为防止其溢出，浏览器是否允许这样的单词中断换行。</li>
+</ul>
+
+<p>不过 CSS 规范中并没有完整定义换行机会何时出现，多数情况下换行机会的产生遵循 Unicode 换行算法，属性定义也沿用了算法中给出的换行类，这四个属性更多是在特殊情况下调整 Unicode 换行算法给出的换行机会。</p>
+
+<p>到现在你应该知道为什么我们实现的换行和浏览器里渲染的表现有些许差异了，我们既没有遵守 CSS 规范也没有遵守 Unicode 换行算法。不过把这两个算法都实现一遍是个艰巨的任务，幸好有人已经做过并将它开源：<a href="https://github.com/niklasvh/css-line-break">niklasvh/css-line-break</a>。</p>
+
+<p>使用 css-line-break 库，我们可以进一步优化代码使其渲染的文本更贴近浏览器渲染结果了。在下面的代码中新建了<code class="highlighter-rouge">calculateTextWrapLinesULB</code>用于替换上一节的<code class="highlighter-rouge">calculateTextWrapLines</code>。</p>
 
 <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">LineBreaker</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">css-line-break</span><span class="dl">'</span>
 
 <span class="c1">// 代码基本逻辑相同，不再注释</span>
 <span class="kd">function</span> <span class="nx">calculateTextWrapLinesULB</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">text</span><span class="p">,</span> <span class="nx">width</span><span class="p">)</span> <span class="p">{</span>
   <span class="kd">let</span> <span class="nx">lines</span> <span class="o">=</span> <span class="p">[]</span>
-  <span class="kd">let</span> <span class="nx">currentLineWords</span> <span class="o">=</span> <span class="p">[]</span>
   <span class="kd">const</span> <span class="nx">breaker</span> <span class="o">=</span> <span class="nx">LineBreaker</span><span class="p">(</span><span class="nx">text</span><span class="p">,</span> <span class="p">{</span>
     <span class="na">lineBreak</span><span class="p">:</span> <span class="dl">'</span><span class="s1">strict</span><span class="dl">'</span><span class="p">,</span>
     <span class="na">wordBreak</span><span class="p">:</span> <span class="dl">'</span><span class="s1">normal</span><span class="dl">'</span>
   <span class="p">})</span>
   <span class="kd">let</span> <span class="nx">bk</span>
+  <span class="kd">let</span> <span class="nx">words</span> <span class="o">=</span> <span class="nx">text</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="dl">''</span><span class="p">)</span>
+  <span class="kd">let</span> <span class="nx">line</span> <span class="o">=</span> <span class="dl">''</span>
+
   <span class="k">while</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">bk</span> <span class="o">=</span> <span class="nx">breaker</span><span class="p">.</span><span class="nx">next</span><span class="p">()).</span><span class="nx">done</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">const</span> <span class="nx">word</span> <span class="o">=</span> <span class="nx">bk</span><span class="p">.</span><span class="nx">value</span><span class="p">.</span><span class="nx">slice</span><span class="p">()</span>
-    <span class="nx">currentLineWords</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">word</span><span class="p">)</span>
-    <span class="kd">const</span> <span class="p">{</span> <span class="na">width</span><span class="p">:</span> <span class="nx">measuredWidth</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">ctx</span><span class="p">.</span><span class="nx">measureText</span><span class="p">(</span><span class="nx">currentLineWords</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="dl">''</span><span class="p">))</span>
+    <span class="kd">const</span> <span class="nx">testLine</span> <span class="o">=</span> <span class="nx">line</span> <span class="o">+</span> <span class="nx">word</span>
+    <span class="kd">const</span> <span class="p">{</span> <span class="na">width</span><span class="p">:</span> <span class="nx">measuredWidth</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">ctx</span><span class="p">.</span><span class="nx">measureText</span><span class="p">(</span><span class="nx">testLine</span><span class="p">)</span>
     <span class="k">if</span> <span class="p">(</span><span class="nx">measuredWidth</span> <span class="o">&gt;=</span> <span class="nx">width</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">lines</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">currentLineWords</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nx">currentLineWords</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">).</span><span class="nx">join</span><span class="p">(</span><span class="dl">''</span><span class="p">))</span>
-        <span class="nx">currentLineWords</span> <span class="o">=</span> <span class="p">[</span><span class="nx">currentLineWords</span><span class="p">[</span><span class="nx">currentLineWords</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]]</span>
-      <span class="p">}</span>
+      <span class="nx">lines</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">testLine</span><span class="p">)</span>
+      <span class="nx">line</span> <span class="o">=</span> <span class="nx">word</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="nx">line</span> <span class="o">=</span> <span class="nx">testLine</span>
+    <span class="p">}</span>
   <span class="p">}</span>
-  <span class="nx">currentLineWords</span><span class="p">.</span><span class="nx">length</span> <span class="o">&amp;&amp;</span> <span class="nx">lines</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">currentLineWords</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="dl">''</span><span class="p">))</span>
+  <span class="nx">line</span><span class="p">.</span><span class="nx">length</span> <span class="o">&amp;&amp;</span> <span class="nx">lines</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">line</span><span class="p">)</span>
   <span class="k">return</span> <span class="nx">lines</span>
 <span class="p">}</span>
-
 </code></pre></div></div>
 
 <p>效果预览，左：div，右：canvas 实现。可以看出虽然渲染出来还是有些许区别，但是已经不会违反最基本的排版规则。</p>
 
 <p><img src="/assets/img/canvas-text-wrap/ULB-example.png" alt="效果预览" class="shadow" /></p>
 
-<p>需要注意的是，css-line-break大量的排版规则使得它的体积稍微有些大（压缩前80KB），html2canvas体积大（压缩后40KB）的原因也是因为依赖了css-line-break。</p>
+<p>需要注意的是，css-line-break 大量的排版规则使得它的体积稍微有些大（压缩前 80KB）。</p>
 
-<h2 id="限制最大行数">限制最大行数</h2>
+<h2 id="html2canvas-文本排版原理">html2canvas 文本排版原理</h2>
 
-<p>我们已经在canvas里支持了文本换行，并且能够较好的符合排版规则。</p>
+<p>我们已经知道，html2canvas 能够绘制出与 DOM 节点一摸一样的图片，但我们已知 canvas 难以渲染和浏览器表现一致的文本，html2canvas 是如何做到的？</p>
 
-<p>##</p>
+<p>html2canvas 有两种渲染模式，一种是解析 Dom 节点再绘制到 canvas，还有一种是利用 svg 的 foreignObject 绘制网页到 svg，再将 svg 绘制到 canvas。foreignObject 模式原理可以参考<a href="https://www.zhangxinxu.com/wordpress/2017/08/svg-foreignobject/">这篇文章</a>。</p>
 
-<!-- ## 效率优化？ -->
+<p>在纯 canvas 模式下，html2canvas 巧妙地利用了浏览器的渲染结果，首先使用<a href="https://github.com/niklasvh/css-line-break">css-line-break 库</a>得到可以作为行首的字符集合并以该集合创建文本节点，再利用<code class="highlighter-rouge">createRange</code>API 选中该文本节点，随后通过<code class="highlighter-rouge">getBoundingClientRect</code>获取该文本节点的定位信息。最后利用文本节点的定位信息调用 fillText 就可以使文本渲染结果与浏览器渲染结果基本一致。不过也因为依赖了 css-line-break，html2canvas 的体积同样有些大（压缩后 40KB）。</p>
 
-<h2 id="html2canvas文本排版解析">html2canvas文本排版解析</h2>
-
-<p>html2canvas有两种渲染模式，一种是解析Dom节点再绘制到canvas，还有一种是利用svg的foreignObject绘制网页到svg，再将svg绘制到canvas。foreignObject模式原理比较简单，不做更多介绍。</p>
-
-<p>在纯canvas模式下，html2canvas巧妙地利用了浏览器的渲染结果，首先使用<a href="https://github.com/niklasvh/css-line-break">css-line-break库</a>将文本根据<strong>break opportunities</strong>分割为最小渲染节点，再利用<code class="highlighter-rouge">createRange</code>API选中该文本节点，随后通过<code class="highlighter-rouge">getBoundingClientRect</code>获取该文本节点的定位信息。这样保证了文本渲染结果与浏览器渲染结果基本一致。</p>
-
-<ul>
-  <li>https://github.com/niklasvh/html2canvas/blob/522a4430559f9cdb8b5d5a3ee6db32beaa9d059b/src/dom/text-container.ts</li>
-  <li>https://github.com/niklasvh/html2canvas/blob/master/src/render/canvas/canvas-renderer.ts</li>
-  <li>https://github.com/niklasvh/html2canvas/blob/522a4430559f9cdb8b5d5a3ee6db32beaa9d059b/src/css/layout/text.ts#L47</li>
-</ul>
-
-<p>使用svg foreignObject再绘制到canvas的方法可以参考<a href="https://www.zhangxinxu.com/wordpress/2017/08/svg-foreignobject/">这篇文章</a></p>
+<!-- - https://github.com/niklasvh/html2canvas/blob/522a4430559f9cdb8b5d5a3ee6db32beaa9d059b/src/dom/text-container.ts
+- https://github.com/niklasvh/html2canvas/blob/master/src/render/canvas/canvas-renderer.ts
+- https://github.com/niklasvh/html2canvas/blob/522a4430559f9cdb8b5d5a3ee6db32beaa9d059b/src/css/layout/text.ts#L47 -->
 
 <h2 id="参考资料">参考资料</h2>
 
-<ul class="success">
+<ul>
   <li><a href="http://www.moe.gov.cn/ewebeditor/uploadfile/2015/01/13/20150113091548267.pdf">标点符号用法 - GB/T15834-2011 </a></li>
-  <li><a href="https://www.zhangxinxu.com/wordpress/2018/02/canvas-text-break-line-letter-spacing-vertical/">canvas文本绘制自动换行、字间距、竖排等实现</a></li>
-  <li><a href="https://zh.wikipedia.org/wiki/%E8%87%AA%E5%8A%A8%E6%8D%A2%E8%A1%8C">自动换行 - wikipedia</a></li>
-  <li>https://en.wikipedia.org/wiki/Line_wrap_and_word_wrap
-&lt;!– 
-Success Text.</li>
+  <li><a href="https://www.zhangxinxu.com/wordpress/2018/02/canvas-text-break-line-letter-spacing-vertical/">canvas 文本绘制自动换行、字间距、竖排等实现</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Line_wrap_and_word_wrap">自动换行 - wikipedia</a></li>
+  <li><a href="https://www.unicode.org/Public/UCD/latest/ucd/LineBreak.txt">Unicode 换行算法的数据</a></li>
+  <li><a href="https://www.unicode.org/Public/PROGRAMS/LineBreakSampleCpp/5.2.0/">Unicode 换行算法的 CPP 实现</a></li>
+  <li><a href="https://www.unicode.org/cldr/utility/breaks.jsp">Unicode 换行算法的在线 demo</a></li>
 </ul>
-<p class="info">Info Text.</p>
-<p class="warning">Warning Text.</p>
-<p class="error">Error Text.</p>
-
-<p><code class="success highlighter-rouge">success</code>
-<code class="info highlighter-rouge">info</code>
-<code class="warning highlighter-rouge">warning</code>
-<code class="error highlighter-rouge">error</code></p>
-
-<div><div class="extensions extensions--demo">
-    <iframe src="//codepen.io/cosformula/embed/MWwbVqL/?theme-id=0&amp;default-tab=result" frameborder="0" scrolling="no" allowfullscreen=""></iframe>
-</div></div>
-<p>http://www.rozmichelle.com/kami2/
-When <script type="math/tex">a \ne 0</script>, there are two solutions to <script type="math/tex">ax^2 + bx + c = 0</script> and they are
-<script type="math/tex">x_1 = {-b + \sqrt{b^2-4ac} \over 2a}</script>
-<script type="math/tex">x_2 = {-b - \sqrt{b^2-4ac} \over 2a} \notag</script> –&gt;</p>
-</div><section class="article__sharing d-print-none"></section><div class="d-print-none"><footer class="article__footer"><meta itemprop="dateModified" content="2020-02-20T10:59:00+00:00"><!-- start custom article footer snippet -->
+</div><section class="article__sharing d-print-none"></section><div class="d-print-none"><footer class="article__footer"><meta itemprop="dateModified" content="2020-02-29T15:11:00+00:00"><!-- start custom article footer snippet -->
 
 <!-- end custom article footer snippet -->
-<div class="article__subscribe"><div class="subscribe"><i class="fas fa-rss"></i> <a type="application/rss+xml" href="/feed.xml">Subscribe</a></div>
+<div class="article__subscribe"><div class="subscribe"><i class="fas fa-rss"></i> <a type="application/rss+xml" href="/feed.xml">订阅</a></div>
 </div><div class="article__license"><div class="license">
-    <p>This work is licensed under a <a itemprop="license" rel="license" href="https://creativecommons.org/licenses/by-nc/4.0/">Attribution-NonCommercial 4.0 International</a> license.
+    <p>本文遵守 <a itemprop="license" rel="license" href="https://creativecommons.org/licenses/by-nc/4.0/">Attribution-NonCommercial 4.0 International</a> 许可协议。
       <a rel="license" href="https://creativecommons.org/licenses/by-nc/4.0/">
         <img alt="Attribution-NonCommercial 4.0 International" src="https://i.creativecommons.org/l/by-nc/4.0/88x31.png" />
       </a>
     </p>
   </div></div></footer>
-<div class="article__section-navigator clearfix"><div class="previous"><span>PREVIOUS</span><a href="/2019/08/14/hello-world.html">Hello World</a></div></div></div>
+</div>
 
 </div>
 
@@ -696,7 +689,7 @@ When <script type="math/tex">a \ne 0</script>, there are two solutions to <scrip
 })();
 </script><div class="search search--dark">
   <div class="main">
-    <div class="search__header">Search</div>
+    <div class="search__header">搜索</div>
     <div class="search-bar">
       <div class="search-box js-search-box">
         <div class="search-box__icon-search"><i class="fas fa-search"></i></div>
@@ -706,7 +699,7 @@ When <script type="math/tex">a \ne 0</script>, there are two solutions to <scrip
         </div>
       </div>
       <button class="button button--theme-dark button--pill search__cancel js-search-toggle">
-        Cancel</button>
+        取消</button>
     </div>
     <div class="search-result js-search-result"></div>
   </div>

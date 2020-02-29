@@ -1,7 +1,7 @@
 {
   "name": "css-line-break",
   "scripts": {
-    "dev": "parcel watch index.html",
+    "dev": "parcel index.html",
     "build": "parcel build index.html"
   },
   "version": "1.0.0",

@@ -1,12 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
-<loc>/2019/08/14/hello-world.html</loc>
-<lastmod>2019-08-14T13:21:40+00:00</lastmod>
-</url>
-<url>
-<loc>/2020/02/20/canvas-text-wrap.html</loc>
-<lastmod>2020-02-20T10:59:00+00:00</lastmod>
+<loc>/2020/02/29/canvas-text-wrap.html</loc>
+<lastmod>2020-02-29T15:11:00+00:00</lastmod>
 </url>
 <url>
 <loc>/about.html</loc>
@@ -19,6 +15,6 @@
 </url>
 <url>
 <loc>/code-samples/canvas-text-wrap/css-line-break/</loc>
-<lastmod>2020-02-25T15:32:10+00:00</lastmod>
+<lastmod>2020-02-29T15:41:35+00:00</lastmod>
 </url>
 </urlset>
