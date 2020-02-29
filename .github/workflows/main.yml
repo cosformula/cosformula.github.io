@@ -13,6 +13,8 @@ jobs:
           fetch-depth: 1
       - name: 🧪 Build and deploy
         uses: victoriadrake/jekyll-cd@master
+        env: 
+          JEKYLL_EN: production
       - name: 📦Sync S3
         uses: jakejarvis/s3-sync-action@master
         with:
