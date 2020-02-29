@@ -14,7 +14,7 @@ jobs:
       - name: 🧪 Build and deploy
         uses: victoriadrake/jekyll-cd@master
         env: 
-          JEKYLL_EN: production
+          JEKYLL_ENV: production
       - name: 📦Sync S3
         uses: jakejarvis/s3-sync-action@master
         with:
