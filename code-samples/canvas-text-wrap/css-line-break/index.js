@@ -25,6 +25,20 @@ ctx.scale(3, 3)
 var textEelment = document.getElementById('text')
 const text = `造又道走收里第约，进行提区与代，口般医验民交。 格战进很九存式心须，精人增电文由书，位火该应管员统。 变级分或表动两半部可，白经元第可史步和者规，根建B吧打克完采。 但风则无她下极见飞之，太研南标点六回老，义目建特少串片确。 省空件先照据切石，先情委利将对应，住理屈管壳还自。\n前感为工气政整从电明广适，里共口积蠢影男海我。 节织级料根路时整书进看法，看解严把资响口可学存，主指明5J参串蹦需何。 即七水以来长已带，都许结角等期节，头Z伶正芽己。 目务声识样清日，便或整石断学，度居上影世。 极题因参除深战压联出把量问则为亲，段分问红易列酸孤照色孝满赤没。\n一总己单切持张整队边，处对正据几条族世，被公M教壳求位院。
 `
+const breaker = LineBreaker('Hello, World!', {
+  // lineBreak: 'strict',
+  // wordBreak: 'break-word'
+});
+
+const words = [];
+let bk;
+
+while (!(bk = breaker.next()).done) {
+  console.log(bk.value.slice())
+  words.push(bk.value.slice());
+}
+console.log(words)
+console.log('hello')
 
 // 计算文本应当在何时换行，返回换行处理后的字符串列表
 function calculateTextWrapLinesULB(ctx, text, width) {
