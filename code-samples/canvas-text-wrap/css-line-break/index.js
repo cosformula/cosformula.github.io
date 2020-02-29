@@ -37,8 +37,6 @@ while (!(bk = breaker.next()).done) {
   console.log(bk.value.slice())
   words.push(bk.value.slice());
 }
-console.log(words)
-console.log('hello')
 
 // 计算文本应当在何时换行，返回换行处理后的字符串列表
 function calculateTextWrapLinesULB(ctx, text, width) {
