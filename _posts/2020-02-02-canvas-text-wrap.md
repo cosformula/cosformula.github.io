@@ -1,6 +1,6 @@
 ---
 layout: article
-title: HTML canvas中文本换行的问题
+title: HTML canvas文本换行的问题
 date: 2020-02-29 23:11:00 +0800
 aside:
   toc: true
