@@ -4,6 +4,18 @@ title: HTML canvas中文本换行的问题
 date: 2020-02-29 23:11:00 +0800
 aside:
   toc: true
+lightbox: true
+comment: true
+key: canvas-text-wrap
+# article_header:
+#   type: overlay
+#   image: 
+#     src: https://www.cosformula.org/assets/img/canvas-text-wrap/ULB-example.png
+#   # background_image:
+#     # src: https://www.cosformula.org/assets/img/canvas-text-wrap/ULB-example.png
+#   background_color: '#808080'
+#   theme: dark
+show_author_profile: false
 # mathjax: true
 # mathjax_autoNumber: true
 # mermaid: true
