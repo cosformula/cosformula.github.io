@@ -10,10 +10,10 @@
 		
 	</script><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><title>HTML canvas中文本换行的问题 - cosformula</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><title>HTML canvas文本换行的问题 - cosformula</title>
 
 <meta name="description" content="HTML canvas 绘制文本时不支持换行，一般情况下可以通过 html2canvas 解决复杂的文本排版，但 html2canvas 不能在小程序或 Node canvas 环境下使用。这篇文章介绍了 canvas 文本渲染的基础知识、贪心算法实现自动换行、Unicode 换行算法/CSS 标准中的换行以及 ...">
-<link rel="canonical" href="/2020/02/29/canvas-text-wrap.html"><link rel="alternate" type="application/rss+xml" title="cosformula" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
+<link rel="canonical" href="https://www.cosformula.org/2020/02/29/canvas-text-wrap.html"><link rel="alternate" type="application/rss+xml" title="cosformula" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
 
 <meta name="msapplication-TileColor" content="#ffc40d"><meta name="msapplication-config" content="/assets/browserconfig.xml">
 
@@ -277,7 +277,7 @@
 </svg>
 <a title="# Your Site Description
 " href="/">cosformula</a></div><button class="button button--secondary button--circle search-button js-search-toggle"><i class="fas fa-search"></i></button></div><nav class="navigation">
-        <ul><li class="navigation__item"><a href="/">主页</a></li><li class="navigation__item"><a href="/archive.html">归档</a></li><li class="navigation__item"><a href="/about.html">关于</a></li><li><button class="button button--secondary button--circle search-button js-search-toggle"><i class="fas fa-search"></i></button></li></ul>
+        <ul><li class="navigation__item"><a href="/archive.html">归档</a></li><li class="navigation__item"><a href="/about.html">关于</a></li><li><button class="button button--secondary button--circle search-button js-search-toggle"><i class="fas fa-search"></i></button></li></ul>
       </nav></div>
   </header>
 </div><div class="page__content"><div class ="main"><div class="grid grid--reverse">
@@ -288,11 +288,11 @@
               <div class="col-main cell cell--auto"><!-- start custom main top snippet -->
 
 <!-- end custom main top snippet -->
-<article itemscope itemtype="http://schema.org/Article"><div class="article__header"><header><h1>HTML canvas中文本换行的问题</h1></header><span class="split-space">&nbsp;</span>
+<article itemscope itemtype="http://schema.org/Article"><div class="article__header"><header><h1>HTML canvas文本换行的问题</h1></header><span class="split-space">&nbsp;</span>
           <a class="edit-on-github"
             title="在 Github 上修改"
-            href="https://github.com/cosformula/cosformula.org/tree/master/_posts/2020-02-02-canvas-text-wrap.md">
-            <i class="far fa-edit"></i></a></div><meta itemprop="headline" content="HTML canvas中文本换行的问题"><div class="article__info clearfix"><ul class="right-col menu"><li><i class="far fa-calendar-alt"></i> <span>2020年 02月29日</span>
+            href="https://github.com/cosformula/cosformula.github.io/tree/master/_posts/2020-02-02-canvas-text-wrap.md">
+            <i class="far fa-edit"></i></a></div><meta itemprop="headline" content="HTML canvas文本换行的问题"><div class="article__info clearfix"><ul class="right-col menu"><li><i class="far fa-calendar-alt"></i> <span>2020年 02月29日</span>
             </li></ul></div><meta itemprop="author" content="cosformula"/><meta itemprop="datePublished" content="2020-02-29T15:11:00+00:00"><div class="js-article-content"><div class="layout--article"><!-- start custom article top snippet -->
 
 <!-- end custom article top snippet -->
@@ -410,11 +410,11 @@
 
 <p>Unicode 换行算法描述了这样的算法：给定输入文本，该算法将产生被称为换行机会（<strong>break opportunities</strong>）的一组位置，换行机会指的是在文本渲染的过程中允许于此处换行，不过实际换行位置需要结合显示窗口宽度和字体大小由更高层的应用软件另行确认。</p>
 
-<p>该算法的规则大致可分为以下几类。算法中将 Unicode 字符分为不同的换行类（Line Breaking Classes），例如表意文字为一类（如汉字）、左标点为一类（如”[“）、数字前置符号为一类（如”$“）等等。这些字符类本身在换行中有默认表现，如「除非特殊情况下表意文字的前后均可换行」、「左标点符号后禁止换行」。不同字符类组合起来还需遵守另外的规则，例如「在数字和字母之间禁止换行」。除此之外还有类似「永远不在文本的开头换行」、「文本的结尾永远可以换行」、「除禁止换行的位置外都允许换行」的规则。</p>
+<p>该算法的规则大致可分为以下几类。算法中将 Unicode 字符分为不同的换行类（<strong>Line Breaking Classes</strong>），例如表意文字为一类（如汉字）、左标点为一类（如<code class="highlighter-rouge">[</code>）、数字前置符号为一类（如<code class="highlighter-rouge">\$</code>）等等。这些字符类本身在换行中有默认表现，如「除非特殊情况下表意文字的前后均可换行」、「左标点符号后禁止换行」。不同字符类组合起来还需遵守另外的规则，例如「在数字和字母之间禁止换行」。除此之外还有类似「永远不在文本的开头换行」、「文本的结尾永远可以换行」、「除禁止换行的位置外都允许换行」的规则。</p>
 
-<p>我们可以用一个简单的例子说明换行算法的作用：遵循 Unicode 换行算法的规定，给定句子”Hello, world!”，将给出”Hello, <strong>|</strong>world!<strong>|</strong>“（<strong>|</strong>代表换行机会）。根据给出的换行位置，在实际绘制中我们可以先把”Hello, “填充到第一行，如果发现位置不够放”world!”，就把”world!”放到第二行。但是在上文的贪心算法里，我们简单地把每一个字符都视作换行机会，这也导致了奇怪的排版。</p>
+<p>我们可以用一个简单的例子说明换行算法的作用：遵循 Unicode 换行算法的规定，给定句子<code class="highlighter-rouge">Hello, world!</code>，将给出<code class="highlighter-rouge">Hello, |world!|</code>（<strong>|</strong>代表换行机会）。根据给出的换行位置，在实际绘制中我们可以先把<code class="highlighter-rouge">Hello, </code>填充到第一行，如果发现位置不够放<code class="highlighter-rouge">world!</code>，就把<code class="highlighter-rouge">world!</code>放到第二行。但是在上文的贪心算法里，我们简单地把每一个字符都视作换行机会，这也导致了奇怪的排版。</p>
 
-<p>那么浏览器中文本换行规则是怎样的？CSS 中关于换行表现的属性有”line-break”、”word-break”、”hyphens”和”overflow-wrap”，这些属性在<a href="https://www.w3.org/TR/css-text-3/#line-breaking">CSS Text Module Level 3</a>有详细定义。</p>
+<p>那么浏览器中文本换行规则是怎样的？CSS 中关于换行表现的属性有<code class="highlighter-rouge">line-break</code>、<code class="highlighter-rouge">word-break</code>、<code class="highlighter-rouge">hyphens</code>和<code class="highlighter-rouge">overflow-wrap</code>，这些属性在<a href="https://www.w3.org/TR/css-text-3/#line-breaking">CSS Text Module Level 3</a>有详细定义。</p>
 
 <ul>
   <li><a href="https://developer.mozilla.org/zh-CN/docs/Web/CSS/line-break">line-break</a>：用来处理如何断开带有标点符号的中文、日文或韩文（CJK）文本的行</li>
@@ -526,7 +526,25 @@
   });
 })();
 </script>
-</div><section class="page__comments d-print-none"></section></article><!-- start custom main bottom snippet -->
+</div><section class="page__comments d-print-none"><!-- fix text color in the input textarea of gitalk -->
+	<style type="text/css">
+		.gitalk-wrapper .gt-header-textarea {
+			color: #333 !important;
+		}
+	</style><div class="gitalk-wrapper" id="js-gitalk-container"></div><script>
+		window.Lazyload.css('https://cdn.bootcss.com/gitalk/1.2.2/gitalk.min.css');
+		window.Lazyload.js('https://cdn.bootcss.com/gitalk/1.2.2/gitalk.min.js', function() {
+			var gitalk = new Gitalk({
+				clientID: '67539d8433cb3f4e64af',
+				clientSecret: 'ccb1a42e758d0c7f12481462fe8c5a6c593f25e4',
+				repo: 'cosformula.github.io',
+				owner: 'cosformula',
+				admin: ['cosformula'],
+				id: 'canvas-text-wrap'
+			});
+			gitalk.render('js-gitalk-container');
+		});
+	</script></section></article><!-- start custom main bottom snippet -->
 
 <!-- end custom main bottom snippet -->
 </div>
@@ -534,11 +552,21 @@
 <footer class="footer py-4 js-page-footer">
   <div class="main"><div itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="cosformula"><meta itemprop="url" content="/"><meta itemprop="description" content="engineer"><div class="footer__author-links"><div class="author-links">
-  <ul class="menu menu--nowrap menu--inline"></ul>
+  <ul class="menu menu--nowrap menu--inline"><li title="给我发邮件。">
+      <a class="button button--circle mail-button" itemprop="email" href="mailto:m@cosformula.org" target="_blank">
+        <i class="fas fa-envelope"></i>
+      </a><li title="在 Github 上关注我。">
+        <a class="button button--circle github-button" itemprop="sameAs" href="https://github.com/cosformula" target="_blank">
+          <div class="icon"><svg fill="#000000" width="24px" height="24px" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <path class="svgpath" data-index="path_0" fill="#272636" d="M0 525.2c0 223.6 143.3 413.7 343 483.5 26.9 6.8 22.8-12.4 22.8-25.4l0-88.7c-155.3 18.2-161.5-84.6-172-101.7-21.1-36-70.8-45.2-56-62.3 35.4-18.2 71.4 4.6 113.1 66.3 30.2 44.7 89.1 37.2 119 29.7 6.5-26.9 20.5-50.9 39.7-69.6C248.8 728.2 181.7 630 181.7 513.2c0-56.6 18.7-108.7 55.3-150.7-23.3-69.3 2.2-128.5 5.6-137.3 66.5-6 135.5 47.6 140.9 51.8 37.8-10.2 80.9-15.6 129.1-15.6 48.5 0 91.8 5.6 129.8 15.9 12.9-9.8 77-55.8 138.8-50.2 3.3 8.8 28.2 66.7 6.3 135 37.1 42.1 56 94.6 56 151.4 0 117-67.5 215.3-228.8 243.7 26.9 26.6 43.6 63.4 43.6 104.2l0 128.8c0.9 10.3 0 20.5 17.2 20.5C878.1 942.4 1024 750.9 1024 525.3c0-282.9-229.3-512-512-512C229.1 13.2 0 242.3 0 525.2L0 525.2z" />
+</svg>
+</div>
+        </a>
+      </li></ul>
 </div>
 </div>
     </div><div class="site-info mt-2">
-      <div>© cosformula 2019,
+      <div>© cosformula 2020,
         Powered by <a title="Jekyll is a simple, blog-aware, static site generator." href="http://jekyllrb.com/">Jekyll</a> & <a
         title="TeXt is a super customizable Jekyll theme." href="https://github.com/kitian616/jekyll-TeXt-theme">TeXt Theme</a>.
       </div>
@@ -610,7 +638,7 @@
     $.fn.modal = modal;
   });
 })();
-</script><div class="modal modal--overflow page__search-modal d-print-none js-page-search-modal"><script>
+</script><div class="modal d-print-none js-page-gallery-modal"><div class="gallery"></div></div><div class="modal modal--overflow page__search-modal d-print-none js-page-search-modal"><script>window.useDefaultSearchBox = false;</script><script>
 (function () {
   var SOURCES = window.TEXT_VARIABLES.sources;
   window.Lazyload.js(SOURCES.jquery, function() {
@@ -696,137 +724,58 @@
     }
   });
 })();
-</script><div class="search search--dark">
-  <div class="main">
-    <div class="search__header">搜索</div>
-    <div class="search-bar">
-      <div class="search-box js-search-box">
-        <div class="search-box__icon-search"><i class="fas fa-search"></i></div>
-        <input type="text" />
-        <div class="search-box__icon-clear js-icon-clear">
-          <a><i class="fas fa-times"></i></a>
-        </div>
+</script><div class="search search--dark search--google-custom-search-engine">
+    <div class="main">
+      <div class="content js-gcse">
+        <!-- <gcse:search enableAutoComplete="true" gname="search-box"></gcse:search>
+        <gcse:searchresults-only gname="results"></gcse:searchresults-only> -->
       </div>
-      <button class="button button--theme-dark button--pill search__cancel js-search-toggle">
-        取消</button>
     </div>
-    <div class="search-result js-search-result"></div>
   </div>
-</div>
-<script>var SOURCES = window.TEXT_VARIABLES.sources;
-var PAHTS = window.TEXT_VARIABLES.paths;
-window.Lazyload.js([SOURCES.jquery, PAHTS.search_js], function() {
+  <script>
+    var gcse = document.getElementsByClassName('js-gcse')[0];
+    var gcseSearch = document.createElement('gcse:search');
+    gcseSearch.setAttribute('enableAutoComplete', 'true');
+    gcseSearch.setAttribute('gname', 'search-box');
+    var gcseSearchresults = document.createElement('gcse:searchresults-only');
+    gcseSearchresults.setAttribute('gname', 'results');
+    gcse.appendChild(gcseSearch);
+    gcse.appendChild(gcseSearchresults);
+  </script>
+  <script>var SOURCES = window.TEXT_VARIABLES.sources;
+window.Lazyload.js(SOURCES.jquery, function() {
+  /* global google */
   var search = (window.search || (window.search = {}));
-  var searchData = window.TEXT_SEARCH_DATA || {};
+  var searchBox, searchInput, clearIcon, searchModal;
 
-  function memorize(f) {
-    var cache = {};
-    return function () {
-      var key = Array.prototype.join.call(arguments, ',');
-      if (key in cache) return cache[key];
-      else return cache[key] = f.apply(this, arguments);
-    };
-  }
-
-  /// search
-  function searchByQuery(query) {
-    var i, j, key, keys, cur, _title, result = {};
-    keys = Object.keys(searchData);
-    for (i = 0; i < keys.length; i++) {
-      key = keys[i];
-      for (j = 0; j < searchData[key].length; j++) {
-        cur = searchData[key][j], _title = cur.title;
-        if ((result[key] === undefined || result[key] && result[key].length < 4 )
-          && _title.toLowerCase().indexOf(query.toLowerCase()) >= 0) {
-          if (result[key] === undefined) {
-            result[key] = [];
-          }
-          result[key].push(cur);
-        }
-      }
-    }
-    return result;
-  }
-
-  var renderHeader = memorize(function(header) {
-    return $('<p class="search-result__header">' + header + '</p>');
-  });
-
-  var renderItem = function(index, title, url) {
-    return $('<li class="search-result__item" data-index="' + index + '"><a class="button" href="' + url + '">' + title + '</a></li>');
+  search.clear = function() {
+    searchBox && searchBox.clearAllResults();
+  };
+  search.onShow = function() {
+    searchInput && searchInput.focus();
+  };
+  search.onHide = function() {
+    searchInput && searchInput.blur();
   };
 
-  function render(data) {
-    if (!data) { return null; }
-    var $root = $('<ul></ul>'), i, j, key, keys, cur, itemIndex = 0;
-    keys = Object.keys(data);
-    for (i = 0; i < keys.length; i++) {
-      key = keys[i];
-      $root.append(renderHeader(key));
-      for (j = 0; j < data[key].length; j++) {
-        cur = data[key][j];
-        $root.append(renderItem(itemIndex++, cur.title, cur.url));
-      }
+  window.__gcse = {
+    callback: function() {
+      searchBox = google.search.cse.element.getElement('search-box');
+      searchInput = document.getElementById('gsc-i-id1');
+      clearIcon = document.getElementById('gs_cb50');
+      searchModal = search.searchModal;
+      searchModal && searchModal.$el && searchModal.$el.on('click', function(e) {
+        (e.target === this || e.target === clearIcon || e.target.className === 'gs-title') && searchModal.hide();
+      });
     }
-    return $root;
-  }
-
-  // search box
-  var $result = $('.js-search-result'), $resultItems;
-  var lastActiveIndex, activeIndex;
-
-  function clear() {
-    $result.html(null);
-    $resultItems = $('.search-result__item'); activeIndex = 0;
-  }
-  function onInputNotEmpty(val) {
-    $result.html(render(searchByQuery(val)));
-    $resultItems = $('.search-result__item'); activeIndex = 0;
-    $resultItems.eq(0).addClass('active');
-  }
-
-  search.clear = clear;
-  search.onInputNotEmpty = onInputNotEmpty;
-
-  function updateResultItems() {
-    lastActiveIndex >= 0 && $resultItems.eq(lastActiveIndex).removeClass('active');
-    activeIndex >= 0 && $resultItems.eq(activeIndex).addClass('active');
-  }
-
-  function moveActiveIndex(direction) {
-    var itemsCount = $resultItems ? $resultItems.length : 0;
-    if (itemsCount > 1) {
-      lastActiveIndex = activeIndex;
-      if (direction === 'up') {
-        activeIndex = (activeIndex - 1 + itemsCount) % itemsCount;
-      } else if (direction === 'down') {
-        activeIndex = (activeIndex + 1 + itemsCount) % itemsCount;
-      }
-      updateResultItems();
-    }
-  }
-
-  // Char Code: 13  Enter, 37  ⬅, 38  ⬆, 39  ➡, 40  ⬇
-  $(window).on('keyup', function(e) {
-    var modalVisible = search.getModalVisible && search.getModalVisible();
-    if (modalVisible) {
-      if (e.which === 38) {
-        modalVisible && moveActiveIndex('up');
-      } else if (e.which === 40) {
-        modalVisible && moveActiveIndex('down');
-      } else if (e.which === 13) {
-        modalVisible && $resultItems && activeIndex >= 0 && $resultItems.eq(activeIndex).children('a')[0].click();
-      }
-    }
-  });
-
-  $result.on('mouseover', '.search-result__item > a', function() {
-    var itemIndex = $(this).parent().data('index');
-    itemIndex >= 0 && (lastActiveIndex = activeIndex, activeIndex = itemIndex, updateResultItems());
-  });
+  };
+  var cx = '009984374709058072108:rp8sxrfibj9'; // Insert your own Custom Search Engine ID here
+  var gcse = document.createElement('script'); gcse.type = 'text/javascript'; gcse.async = true;
+  gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
+    '//cse.google.com/cse.js?cx=' + cx;
+  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(gcse, s);
 });
-</script>
-</div></div>
+</script></div></div>
 
 
 <script>(function() {
@@ -1058,6 +1007,474 @@ window.Lazyload.js([SOURCES.jquery, PAHTS.search_js], function() {
       };
     }
     $.fn.toc = toc;
+  });
+})();
+(function() {(function() {
+  var SOURCES = window.TEXT_VARIABLES.sources;
+  window.Lazyload.js(SOURCES.jquery, function() {
+    function swiper(options) {
+      var $window = $(window), $root = this, $swiperWrapper, $swiperSlides, $swiperButtonPrev, $swiperButtonNext,
+        initialSlide, animation, onChange, onChangeEnd,
+        rootWidth, count, preIndex, curIndex, translateX, CRITICAL_ANGLE = Math.PI / 3;
+
+      function setOptions(options) {
+        var _options = options || {};
+        initialSlide = _options.initialSlide || 0;
+        animation = _options.animation === undefined && true;
+        onChange = onChange || _options.onChange;
+        onChangeEnd = onChangeEnd || _options.onChangeEnd;
+      }
+
+      function init() {
+        $swiperWrapper = $root.find('.swiper__wrapper');
+        $swiperSlides = $root.find('.swiper__slide');
+        $swiperButtonPrev = $root.find('.swiper__button--prev');
+        $swiperButtonNext = $root.find('.swiper__button--next');
+        animation && $swiperWrapper.addClass('swiper__wrapper--animation');
+        calc(true);
+      }
+
+      function preCalc() {
+        rootWidth = $root.width();
+        count = $swiperWrapper.children('.swiper__slide').length;
+        if (count < 2) {
+          $swiperButtonPrev.addClass('d-none');
+          $swiperButtonNext.addClass('d-none');
+        }
+        curIndex = initialSlide || 0;
+        translateX = getTranslateXFromCurIndex();
+      }
+
+      var calc = (function() {
+        var preAnimation, $swiperSlide, $preSwiperSlide;
+        return function (needPreCalc, params) {
+          needPreCalc && preCalc();
+          var _animation = (params && params.animation !== undefined) ? params.animation : animation;
+          if (preAnimation === undefined || preAnimation !== _animation) {
+            preAnimation = _animation ? $swiperWrapper.addClass('swiper__wrapper--animation') :
+              $swiperWrapper.removeClass('swiper__wrapper--animation');
+          }
+          if (preIndex !== curIndex) {
+            ($preSwiperSlide = $swiperSlides.eq(preIndex)).removeClass('active');
+            ($swiperSlide = $swiperSlides.eq(curIndex)).addClass('active');
+            onChange && onChange(curIndex, $swiperSlides.eq(curIndex), $swiperSlide, $preSwiperSlide);
+            if (onChangeEnd) {
+              if (_animation) {
+                setTimeout(function() {
+                  onChangeEnd(curIndex, $swiperSlides.eq(curIndex), $swiperSlide, $preSwiperSlide);
+                }, 400);
+              } else {
+                onChangeEnd(curIndex, $swiperSlides.eq(curIndex), $swiperSlide, $preSwiperSlide);
+              }
+            }
+            preIndex = curIndex;
+          }
+          $swiperWrapper.css('transform', 'translate(' + translateX + 'px, 0)');
+          if (count > 1) {
+            if (curIndex <= 0) {
+              $swiperButtonPrev.addClass('disabled');
+            } else {
+              $swiperButtonPrev.removeClass('disabled');
+            }
+            if (curIndex >= count - 1) {
+              $swiperButtonNext.addClass('disabled');
+            } else {
+              $swiperButtonNext.removeClass('disabled');
+            }
+          }
+        };
+      })();
+
+      function getTranslateXFromCurIndex() {
+        return curIndex <= 0 ? 0 : - rootWidth * curIndex;
+      }
+
+      function moveToIndex(index ,params) {
+        preIndex = curIndex;
+        curIndex = index;
+        translateX = getTranslateXFromCurIndex();
+        calc(false, params);
+      }
+
+      function move(type) {
+        var nextIndex = curIndex, unstableTranslateX;
+        if (type === 'prev') {
+          nextIndex > 0 && nextIndex--;
+        } else if (type === 'next') {
+          nextIndex < count - 1 && nextIndex++;
+        }
+        if (type === 'cur') {
+          moveToIndex(curIndex, { animation: true });
+          return;
+        }
+        unstableTranslateX = translateX % rootWidth !== 0;
+        if (nextIndex !== curIndex || unstableTranslateX) {
+          unstableTranslateX ? moveToIndex(nextIndex, { animation: true }) : moveToIndex(nextIndex);
+        }
+      }
+
+      setOptions(options);
+      init();
+      preIndex = curIndex;
+
+      $swiperButtonPrev.on('click', function(e) {
+        e.stopPropagation();
+        move('prev');
+      });
+      $swiperButtonNext.on('click', function(e) {
+        e.stopPropagation();
+        move('next');
+      });
+      $window.on('resize', function() {
+        calc(true, { animation: false });
+      });
+
+      (function() {
+        var pageX, pageY, velocityX, preTranslateX = translateX, timeStamp, touching;
+        function handleTouchstart(e) {
+          var point = e.touches ? e.touches[0] : e;
+          pageX = point.pageX;
+          pageY = point.pageY;
+          velocityX = 0;
+          preTranslateX = translateX;
+        }
+        function handleTouchmove(e) {
+          if (e.touches && e.touches.length > 1) {
+            return;
+          }
+          var point = e.touches ? e.touches[0] : e;
+          var deltaX = point.pageX - pageX;
+          var deltaY = point.pageY - pageY;
+          velocityX = deltaX / (e.timeStamp - timeStamp);
+          timeStamp = e.timeStamp;
+          if (e.cancelable && Math.abs(Math.atan(deltaY / deltaX)) < CRITICAL_ANGLE) {
+            touching = true;
+            translateX += deltaX;
+            calc(false, { animation: false });
+          }
+          pageX = point.pageX;
+          pageY = point.pageY;
+        }
+        function handleTouchend() {
+          touching = false;
+          var deltaX = translateX - preTranslateX;
+          var distance = deltaX + velocityX * rootWidth;
+          if (Math.abs(distance) > rootWidth / 2) {
+            distance > 0 ? move('prev') : move('next');
+          } else {
+            move('cur');
+          }
+        }
+        $swiperWrapper.on('touchstart', handleTouchstart);
+        $swiperWrapper.on('touchmove', handleTouchmove);
+        $swiperWrapper.on('touchend', handleTouchend);
+        $swiperWrapper.on('touchcancel', handleTouchend);
+
+        (function() {
+          var pressing = false, moved = false;
+          $swiperWrapper.on('mousedown', function(e) {
+            pressing = true; handleTouchstart(e);
+          });
+          $swiperWrapper.on('mousemove', function(e) {
+            pressing && (e.preventDefault(), moved = true, handleTouchmove(e));
+          });
+          $swiperWrapper.on('mouseup', function(e) {
+            pressing && (pressing = false, handleTouchend(e));
+          });
+          $swiperWrapper.on('mouseleave', function(e) {
+            pressing && (pressing = false, handleTouchend(e));
+          });
+          $swiperWrapper.on('click', function(e) {
+            moved && (e.stopPropagation(), moved = false);
+          });
+        })();
+
+        $root.on('touchmove', function(e) {
+          if (e.cancelable & touching) {
+            e.preventDefault();
+          }
+        });
+      })();
+
+      return {
+        setOptions: setOptions,
+        previous: function(){
+          move('prev');
+        },
+        next: function(){
+          move('next');
+        },
+        refresh: function() {
+          calc(true, { animation: false });
+        }
+      };
+    }
+    $.fn.swiper = swiper;
+  });
+})();
+var SOURCES = window.TEXT_VARIABLES.sources;
+  window.Lazyload.js(SOURCES.jquery, function() {
+    var template =
+      '<div class="swiper gallery__swiper">' +
+        '<div class="swiper__wrapper">' +
+        '</div>' +
+        '<div class="swiper__button swiper__button--prev fas fa-chevron-left"></div>' +
+        '<div class="swiper__button swiper__button--next fas fa-chevron-right"></div>' +
+      '</div>';
+    function setState($item, zoom, translate) {
+      $item.css('transform', 'scale(' + zoom + ') translate(' + translate.x +  'px,' + translate.y + 'px)');
+    }
+    function Gallery(root, items) {
+      this.$root = $(root);
+      this.$swiper = null;
+      this.$swiperWrapper = null;
+      this.$activeItem = null;
+      this.$items = [];
+      this.contentWidth = 0;
+      this.contentHeight = 0;
+      this.swiper = null;
+      this.items = items;
+      this.disabled = false;
+      this.curIndex = 0;
+      this.touchCenter = null;
+      this.lastTouchCenter = null;
+      this.zoomRect = null;
+      this.lastZoomRect = null;
+      this.lastTranslate = null;
+      this.translate = null;
+      this.lastZoom = 1;
+      this.preZoom = 1;
+      this.zoom = 1;
+    }
+    Gallery.prototype.init = function() {
+      var i, item, items = this.items, size, self = this, touchstartFingerCount = 0;
+      this.$root.append(template);
+      this.$swiper = this.$root.find('.gallery__swiper');
+      this.$swiperWrapper = this.$root.find('.swiper__wrapper');
+      this.contentWidth = this.$swiperWrapper && this.$swiperWrapper.width();
+      this.contentHeight = this.$swiperWrapper && this.$swiperWrapper.height();
+      for (i = 0; i < items.length; i++) {
+        item = items[i];
+        size = this._calculateImageSize(item.w, item.h);
+        this.$items.push($(
+          '<div class="swiper__slide">' +
+            '<div class="gallery-item">' +
+              '<div class="gallery-item__content">' +
+                '<img src="' + item.src + '" style="width:' + size.w + 'px;height:' + size.h +  'px"/>' +
+              '</div>' +
+            '</div>' +
+          '</div>'
+        ));
+      }
+      this.$swiperWrapper && this.$swiperWrapper.append(this.$items);
+      this.swiper = this.$swiper && this.$swiper.swiper({
+        onChangeEnd: function() {
+          self._handleChangeEnd.apply(self, Array.prototype.slice.call(arguments));
+        }
+      });
+      $(window).on('resize', function() {
+        if (self.disabled) { return; }
+        self._resizeImageSize();
+      });
+      // Char Code: 37  ⬅, 39  ➡
+      $(window).on('keyup', function(e) {
+        if (window.isFormElement(e.target || e.srcElement) || self.disabled) { return; }
+        if (e.which === 37) {
+          self.swiper && self.swiper.previous();
+        } else if (e.which === 39) {
+          self.swiper && self.swiper.next();
+        }
+      });
+      function getRect(touch0, touch1) {
+        return {
+          o: {
+            x: (touch0.pageX + touch1.pageX) / 2,
+            y: (touch0.pageY + touch1.pageY) / 2
+          },
+          w: Math.abs(touch0.pageX - touch1.pageX),
+          h: Math.abs(touch0.pageY - touch1.pageY)
+        };
+      }
+      function getTouches(e) {
+        return e.touches || e;
+      }
+      function getTouchesCount(e) {
+        if (e.touches) {
+          return e.touches.length;
+        } else {
+          return 1;
+        }
+      }
+      this.$swiperWrapper.on('touchstart', function(e) {
+        var touch0, touch1, rect;
+        touchstartFingerCount = getTouchesCount(e);
+        if (touchstartFingerCount > 1) {
+          touch0 = e.touches[0];
+          touch1 = e.touches[1];
+          rect = getRect(touch0, touch1);
+          self.lastZoomRect = { w: rect.w, h: rect.h };
+          self.lastTouchCenter = rect.o;
+        } else {
+          var touch = getTouches(e)[0];
+          self.lastTouchCenter = { x: touch.pageX, y: touch.pageY };
+        }
+      });
+      this.$swiperWrapper.on('touchmove', function(e) {
+        if (touchstartFingerCount === getTouchesCount(e)) {
+          if (touchstartFingerCount > 1) {
+            var touch0 = e.touches[0];
+            var touch1 = e.touches[1];
+            var rect = getRect(touch0, touch1);
+            self.zoomRect = { w: rect.w, h: rect.h };
+            self.touchCenter = rect.o;
+            self._zoom(); self._translate();
+            setState(self.$activeItem, self.zoom, self.translate);
+          } else {
+            var touch = getTouches(e)[0];
+            self.touchCenter = { x: touch.pageX, y: touch.pageY };
+            self._translate();
+            setState(self.$activeItem, self.zoom, self.translate);
+          }
+        }
+      });
+      this.$swiperWrapper.on('touchend', function(e) {
+        self.lastZoom = self.zoom;
+        self.lastTranslate = self.translate;
+        touchstartFingerCount = 0;
+      });
+      this.$root.on('touchmove', function(e) {
+        if (self.disabled) { return; }
+        e.preventDefault();
+      });
+    };
+
+    Gallery.prototype._translate = function() {
+      this.translate = this.touchCenter && this.lastTouchCenter && this.lastTranslate ? {
+        x: (this.touchCenter.x - this.lastTouchCenter.x) / this.zoom + this.lastTranslate.x,
+        y: (this.touchCenter.y - this.lastTouchCenter.y) / this.zoom + this.lastTranslate.y
+      } : { x: 0, y: 0 };
+    }
+    Gallery.prototype._zoom = function() {
+      this.zoom = (this.zoomRect.w + this.zoomRect.h) / (this.lastZoomRect.w + this.lastZoomRect.h) * this.lastZoom;
+      this.zoom > 1 ? this.$activeItem.addClass('zoom') : this.$activeItem.removeClass('zoom');
+      this.preZoom = this.zoom;
+    }
+
+    Gallery.prototype._calculateImageSize = function(w, h) {
+      var scale = 1;
+      if (this.contentWidth > 0 && this.contentHeight > 0 && w > 0 && h > 0) {
+        scale = Math.min(
+          Math.min(w, this.contentWidth) / w,
+          Math.min(h, this.contentHeight) / h);
+      }
+      return { w: Math.floor(w * scale), h: Math.floor(h * scale) };
+    };
+
+    Gallery.prototype._resizeImageSize = function() {
+      var i, $item, $items = this.$items, item, size;
+      this.contentWidth = this.$swiperWrapper && this.$swiperWrapper.width();
+      this.contentHeight = this.$swiperWrapper && this.$swiperWrapper.height();
+      if ($items.length < 1) { return; }
+      for (i = 0; i < $items.length; i++) {
+        item = this.items[i], $item = $items[i];
+        size = this._calculateImageSize(item.w, item.h);
+        item.width = size.w; item.height = size.h;
+        $item && $item.find('img').css({ width: size.w, height: size.h });
+      }
+    };
+    Gallery.prototype._handleChangeEnd = function(index, $dom, preIndex, $preDom) {
+      this.curIndex = index;
+      this.lastZoomRect = null; this.lastZoomRect = null;
+      this.lastTranslate = this.translate = { x: 0, y:0 };
+      this.lastZoom = this.preZoom = this.zoom = 1;
+      this.$activeItem = $dom.find('.gallery-item__content');
+      setState($preDom.find('.gallery-item__content'), this.zoom, this.translate);
+    };
+
+    Gallery.prototype.refresh = function() {
+      this.swiper && this.swiper.refresh();
+      this._resizeImageSize();
+    };
+    Gallery.prototype.setOptions = function(options) {
+      this.disabled = options.disabled;
+      this.swiper && this.swiper.setOptions(options);
+    };
+    window.Gallery = Gallery;
+  });
+})();(function() {
+  window.imagesLoad = function(images) {
+    images = images || document.getElementsByTagName('img');
+    var imagesCount = images.length, loadedCount = 0, image;
+    var i, j, loaded = false, cbs = [];
+    imagesCount < 1 && (loaded = true);
+    for (i = 0; i < imagesCount; i++) {
+      image = images[i];
+      image.complete ? handleImageLoad() : image.addEventListener('load', handleImageLoad);
+    }
+    function handleImageLoad() {
+      loadedCount++;
+      if (loadedCount === imagesCount) {
+        loaded = true;
+        if (cbs.length > 0) {
+          for (j = 0; j < cbs.length; j++) {
+            cbs[j]();
+          }
+        }
+      }
+    }
+    return {
+      then: function(cb) {
+        cb && (loaded ? cb() : (cbs.push(cb)));
+      }
+    };
+  };
+})();
+(function () {
+  var SOURCES = window.TEXT_VARIABLES.sources;
+  window.Lazyload.js(SOURCES.jquery, function() {
+    var $pageGalleryModal = $('.js-page-gallery-modal');
+    var $images = $('.page__content').find('img:not(.lightbox-ignore)');
+    window.imagesLoad($images).then(function() {
+      /* global Gallery */
+      var pageGalleryModal = $pageGalleryModal.modal({ onChange: handleModalChange });
+      var gallery = null;
+      var modalVisible = false;
+      var i, items = [], image, item;
+      if($images && $images.length > 0) {
+        for (i = 0; i < $images.length; i++) {
+          image = $images.eq(i);
+          if (image.get(0).naturalWidth > 800) {
+            items.push({ src: image.attr('src'), w: image.get(0).naturalWidth, h: image.get(0).naturalHeight, $el: image});
+          }
+        }
+      }
+
+      if(items.length > 0) {
+        gallery = new Gallery('.gallery', items);
+        gallery.setOptions({ disabled: !modalVisible });
+        gallery.init();
+        for (i = 0; i < items.length; i++) {
+          item = items[i];
+          item.$el && (item.$el.addClass('popup-image'), item.$el.on('click', (function() {
+            var index = i;
+            return function() {
+              pageGalleryModal.show();
+              gallery.setOptions({ initialSlide: index });
+              gallery.refresh(true, { animation: false });
+            };
+          })()));
+        }
+      }
+
+      function handleModalChange(visible) {
+        modalVisible = visible;
+        gallery && gallery.setOptions({ disabled: !modalVisible });
+      }
+
+      $pageGalleryModal.on('click', function() {
+        pageGalleryModal.hide();
+      });
+    });
   });
 })();
 /*(function () {
