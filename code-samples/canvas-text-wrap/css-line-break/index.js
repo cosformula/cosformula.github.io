@@ -34,7 +34,6 @@ const words = [];
 let bk;
 
 while (!(bk = breaker.next()).done) {
-  console.log(bk.value.slice())
   words.push(bk.value.slice());
 }
 

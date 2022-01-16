@@ -95,4 +95,5 @@ export {
   someCssAsObject,
   someMoreBasicStyles,
   otherStyles,
-  basicStyles,
+  basicStyles
+}

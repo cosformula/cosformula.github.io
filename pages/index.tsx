@@ -4,7 +4,7 @@ import React from 'react'
 import { Collection, CollectionRow, NotionRenderer } from 'react-notion-x'
 import { notion } from './api'
 
-export const getStaticProps = async (context) => {
+export const getStaticProps = async (context:any) => {
   const recordMap = await notion.getPage(process.env.NOTION_ROOT_PAGE_ID!)
 
   return {
@@ -15,13 +15,12 @@ export const getStaticProps = async (context) => {
   }
 }
 
-export default function NotionPage({ recordMap }) {
+export default function NotionPage({ recordMap }:any) {
   if (!recordMap) {
     return null
   }
 
   const title = getPageTitle(recordMap)
-  console.log(title, recordMap)
 
   return (
     <>

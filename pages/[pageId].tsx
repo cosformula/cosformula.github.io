@@ -7,7 +7,7 @@ import { notion } from './api'
 
 const isDev = process.env.NODE_ENV === 'development' || !process.env.NODE_ENV
 
-export const getStaticProps = async (context) => {
+export const getStaticProps = async (context:any) => {
   const pageId = context.params.pageId as string
   const recordMap = await notion.getPage(pageId)
 
@@ -27,8 +27,8 @@ export async function getStaticPaths() {
     }
   }
 
-  const rootNotionPageId =  process.env.NOTION_ROOT_PAGE_ID
-  const rootNotionSpaceId = process.env.NOTION_WORKSPACE_ID
+  const rootNotionPageId =  process.env.NOTION_ROOT_PAGE_ID!
+  const rootNotionSpaceId = process.env.NOTION_WORKSPACE_ID!
 
   const pages = await getAllPagesInSpace(
     rootNotionPageId,
@@ -47,13 +47,12 @@ export async function getStaticPaths() {
   }
 }
 
-export default function NotionPage({ recordMap }) {
+export default function NotionPage({ recordMap }:any) {
   if (!recordMap) {
     return null
   }
 
   const title = getPageTitle(recordMap)
-  console.log(title, recordMap)
 
   return (
     <>
