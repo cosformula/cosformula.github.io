@@ -11,18 +11,31 @@
   "dependencies": {
     "@emotion/css": "^11.7.1",
     "@emotion/server": "^11.4.0",
-    "@notionhq/client": "^0.4.11",
+    "@notionhq/client": "^0.4.12",
     "next": "11.1.2",
-    "notion-client": "^4.12.0",
+    "notion-client": "^4.14.1",
     "react": "17.0.2",
     "react-dom": "17.0.2",
-    "react-notion-x": "^4.12.0"
+    "react-notion-x": "^4.14.2"
   },
   "devDependencies": {
     "@emotion/babel-plugin": "^11.7.2",
     "@types/react": "17.0.28",
-    "eslint": "8.0.0",
+    "@typescript-eslint/eslint-plugin": "^5.3.1",
+    "@typescript-eslint/parser": "^5.3.1",
+    "@web/test-runner": "^0.13.22",
+    "chai": "^4.3.4",
+    "eslint": "^8.2.0",
     "eslint-config-next": "11.1.2",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-import": "^2.25.3",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-promise": "^6.0.0",
+    "eslint-plugin-react": "^7.27.0",
+    "prettier": "^2.5.1",
+    "eslint-plugin-react-hooks": "^4.3.0",
+    "standardx": "^7.0.0",
     "typescript": "4.4.3"
   }
 }

@@ -2,7 +2,7 @@ import React from 'react'
 import Head from 'next/head'
 
 import { getPageTitle, getAllPagesInSpace } from 'notion-utils'
-import { Collection, CollectionRow, NotionRenderer } from 'react-notion-x'
+import { Code, Collection, CollectionRow, NotionRenderer } from 'react-notion-x'
 import { notion } from './api'
 
 const isDev = process.env.NODE_ENV === 'development' || !process.env.NODE_ENV
@@ -57,16 +57,18 @@ export default function NotionPage({ recordMap }:any) {
   return (
     <>
       <Head>
-        <meta name='description' content='React Notion X demo renderer.' />
-        <title>{title}</title>
+        {/* <meta name='description' content='React Notion X demo renderer.' /> */}
+        <title>{title} - 向后兼容</title>
       </Head>
 
       <NotionRenderer
         recordMap={recordMap}
         fullPage={true}
         darkMode={false}
-        rootDomain='localhost:9090' // used to detect root domain links and open this in the same tab
+        showTableOfContents
+        rootDomain='cosformula.org' 
         components={{
+          code: Code,
           collection: Collection,
           collectionRow: CollectionRow
         }}
