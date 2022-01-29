@@ -1,3 +1,0 @@
-l#!/usr/bin/env bash
-export PORT=9000
-/var/lang/node12/bin/node app.js

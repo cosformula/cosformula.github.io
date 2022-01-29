@@ -1,19 +1,33 @@
-/** @type {import('next').NextConfig} */
 module.exports = {
-  reactStrictMode: true,
-  async redirects () {
+  webpack5: true,
+  images: {
+    domains: ['gravatar.com']
+  },
+  eslint: {
+    dirs: ['components', 'layouts', 'lib', 'pages']
+  },
+  async headers () {
     return [
-      // redirect the index page to our notion test suite
       {
-        source: '/2478179dcfc2497fbf71f8622a983388',
-        destination: '/',
-        permanent: false
-      },
-      {
-        source: '/2020/02/29/canvas-text-wrap.html',
-        destination: '/5dd7a169822b48fd9b4a186ff81b85bb',
-        permanent: false
+        source: '/:path*{/}?',
+        headers: [
+          {
+            key: 'Permissions-Policy',
+            value: 'interest-cohort=()'
+          }
+        ]
       }
     ]
+  },
+  webpack: (config, { dev, isServer }) => {
+    // Replace React with Preact only in client production build
+    if (!dev && !isServer) {
+      Object.assign(config.resolve.alias, {
+        react: 'preact/compat',
+        'react-dom/test-utils': 'preact/test-utils',
+        'react-dom': 'preact/compat'
+      })
+    }
+    return config
   }
 }

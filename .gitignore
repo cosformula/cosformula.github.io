@@ -1,7 +1,7 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
-node_modules
+/node_modules
 /.pnp
 .pnp.js
 
@@ -32,5 +32,7 @@ yarn-error.log*
 
 # vercel
 .vercel
+public/robots.txt
+public/sitemap.xml
 .env
-star-map
+node_modules
