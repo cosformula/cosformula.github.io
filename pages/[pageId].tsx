@@ -1,13 +1,12 @@
-import React from 'react'
 import Head from 'next/head'
-
-import { getPageTitle, getAllPagesInSpace } from 'notion-utils'
-import { Code, Collection, CollectionRow, NotionRenderer } from 'react-notion-x'
+import { getAllPagesInSpace, getPageTitle } from 'notion-utils'
+import React from 'react'
+import { BlogNotionRenderer } from '../components/NotionRenderer'
 import { notion } from './api'
 
 const isDev = process.env.NODE_ENV === 'development' || !process.env.NODE_ENV
 
-export const getStaticProps = async (context:any) => {
+export const getStaticProps = async (context: any) => {
   const pageId = context.params.pageId as string
   const recordMap = await notion.getPage(pageId)
 
@@ -27,27 +26,21 @@ export async function getStaticPaths() {
     }
   }
 
-  const rootNotionPageId =  process.env.NOTION_ROOT_PAGE_ID!
-  const rootNotionSpaceId = process.env.NOTION_WORKSPACE_ID!
+  const rootNotionPageId = process.env.NOTION_ROOT_PAGE_ID!
 
-  const pages = await getAllPagesInSpace(
-    rootNotionPageId,
-    rootNotionSpaceId,
-    notion.getPage.bind(notion),
-    {
-      traverseCollections: false
-    }
-  )
+  const pages = await getAllPagesInSpace(rootNotionPageId, undefined, notion.getPage.bind(notion), {
+    traverseCollections: true
+  })
 
-  const paths = Object.keys(pages).map((pageId) => `/${pageId}`)
+  const paths = Object.keys(pages).map((pageId) => `/${pageId.replace(/-/g, '')}`)
 
   return {
     paths,
-    fallback: true
+    fallback: false
   }
 }
 
-export default function NotionPage({ recordMap }:any) {
+export default function NotionPage({ recordMap }: any) {
   if (!recordMap) {
     return null
   }
@@ -61,18 +54,7 @@ export default function NotionPage({ recordMap }:any) {
         <title>{title} - 向后兼容</title>
       </Head>
 
-      <NotionRenderer
-        recordMap={recordMap}
-        fullPage={true}
-        darkMode={false}
-        showTableOfContents
-        rootDomain='cosformula.org' 
-        components={{
-          code: Code,
-          collection: Collection,
-          collectionRow: CollectionRow
-        }}
-      />
+      <BlogNotionRenderer recordMap={recordMap} fullPage={true} showTableOfContents />
     </>
   )
 }

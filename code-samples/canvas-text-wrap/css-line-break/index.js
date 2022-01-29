@@ -28,17 +28,17 @@ const text = `造又道走收里第约，进行提区与代，口般医验民交
 const breaker = LineBreaker('Hello, World!', {
   // lineBreak: 'strict',
   // wordBreak: 'break-word'
-});
+})
 
-const words = [];
-let bk;
+const words = []
+let bk
 
 while (!(bk = breaker.next()).done) {
-  words.push(bk.value.slice());
+  words.push(bk.value.slice())
 }
 
 // 计算文本应当在何时换行，返回换行处理后的字符串列表
-function calculateTextWrapLinesULB(ctx, text, width) {
+function calculateTextWrapLinesULB (ctx, text, width) {
   let lines = []
   let currentLineWords = []
   const breaker = LineBreaker(text, {
@@ -51,11 +51,11 @@ function calculateTextWrapLinesULB(ctx, text, width) {
     currentLineWords.push(word)
     const { width: measuredWidth } = ctx.measureText(currentLineWords.join(''))
     if (measuredWidth >= width) {
-        // 文本应当在填充当前字符的前一位置换行，所以跳过最后一个字符
-        lines.push(currentLineWords.slice(0, currentLineWords.length - 1).join(''))
-        // 最后一个是下一行的行首
-        currentLineWords = [currentLineWords[currentLineWords.length - 1]]
-      }
+      // 文本应当在填充当前字符的前一位置换行，所以跳过最后一个字符
+      lines.push(currentLineWords.slice(0, currentLineWords.length - 1).join(''))
+      // 最后一个是下一行的行首
+      currentLineWords = [currentLineWords[currentLineWords.length - 1]]
+    }
   }
   // 循环结束时，可能还有字符在缓冲区，把剩下的字符当作最后一行
   currentLineWords.length && lines.push(currentLineWords.join(''))
@@ -63,7 +63,7 @@ function calculateTextWrapLinesULB(ctx, text, width) {
 }
 
 // 计算文本应当在何时换行，返回换行处理后的字符串列表
-function calculateTextWrapLines(ctx, text, width) {
+function calculateTextWrapLines (ctx, text, width) {
   let lines = []
   let currentLineText = ''
   for (let i = 0; i < text.length; i++) {
@@ -82,7 +82,7 @@ function calculateTextWrapLines(ctx, text, width) {
 }
 
 // 调用换行处理函数处理文本换行，
-function fillTextWrap(ctx, { text, x, y, width }) {
+function fillTextWrap (ctx, { text, x, y, width }) {
   // 支持换行符
   const paragraphs = text.split('\n')
   // 将\n分割后的段落交给calculateTextWrapLines处理为换行后的字符串列表

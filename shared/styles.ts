@@ -39,7 +39,7 @@ const someCssAsObject = css({
   background: 'orange',
   color: 'white',
   padding: '10px',
-  marginBottom: '10px',
+  marginBottom: '10px'
 })
 
 const combinedAsArray = css([someMoreBasicStyles, someCssAsObject])
@@ -84,16 +84,8 @@ const keyframesExample = css([
     borderRadius: '50%',
     padding: '20px',
     animation: `${bounce} 1s ease infinite`,
-    transformOrigin: 'center',
-  }),
+    transformOrigin: 'center'
+  })
 ])
 
-export {
-  combinedAsArray,
-  cxExample,
-  keyframesExample,
-  someCssAsObject,
-  someMoreBasicStyles,
-  otherStyles,
-  basicStyles
-}
+export { combinedAsArray, cxExample, keyframesExample, someCssAsObject, someMoreBasicStyles, otherStyles, basicStyles }
