@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://www.cosformula.org
+
+# Sitemaps
+Sitemap: https://www.cosformula.org/sitemap.xml
