@@ -25,6 +25,10 @@ export const BlogNotionRenderer = (props) => {
       // rootPageId={process.env.NOTION_ROOT_PAGE_ID}
       mapImageUrl={(url, block) => {
         const signedUrl = new URL(mapImageUrl(url, block))
+        if (process.env.VERCEL_ENV) {
+          // console.log('vercel env')
+          return signedUrl
+        }
         const urlParts = signedUrl.pathname.split('/')
         const realUrl = `${decodeURIComponent(urlParts[2])}`
 
