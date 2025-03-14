@@ -4,10 +4,10 @@ export default function Page() {
   return (
     <section>
       <h1 className="mb-8 text-2xl font-semibold tracking-tighter">
-        {/* My Portfolio */}
+        cosformula
       </h1>
       <p className="mb-4">
-        {`A developer`}
+        {`产品工程师，游戏开发者。`}
       </p>
       <div className="my-8">
         <BlogPosts />
