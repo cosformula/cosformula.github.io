@@ -28,7 +28,7 @@ Last Edited: 2019-08-13T20:07
 
 ### 元素拆解
 
-![/images/Untitled 43.png](/Untitled%2043.png)
+![/images/Untitled 43.png](/images/Untitled%2043.png)
 
   
 
