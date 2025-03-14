@@ -24,7 +24,12 @@ Last Edited: 2019-08-13T20:07
 <p>果果真可爱！</p>
 ```
 
-[https://codepen.io/cosformula/pen/WVajRb](https://codepen.io/cosformula/pen/WVajRb)
+<p class="codepen" data-height="300" data-default-tab="html,result" data-slug-hash="WVajRb" data-pen-title="Untitled" data-user="cosformula" style="height: 300px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; border: 2px solid; margin: 1em 0; padding: 1em;">
+  <span>See the Pen <a href="https://codepen.io/cosformula/pen/WVajRb">
+  Untitled</a> by formula (<a href="https://codepen.io/cosformula">@cosformula</a>)
+  on <a href="https://codepen.io">CodePen</a>.</span>
+</p>
+<script async src="https://public.codepenassets.com/embed/index.js"></script>
 
 ### 元素拆解
 
