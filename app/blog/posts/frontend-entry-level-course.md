@@ -319,7 +319,23 @@ p {
 <h6 id="guoguo">果果真可爱</h6>
 ```
 
-[https://codepen.io/cosformula/pen/MNPQqm](https://codepen.io/cosformula/pen/MNPQqm)
+<iframe
+  height={300}
+  style={{ width: "100%" }}
+  scrolling="no"
+  title="Untitled"
+  src="https://codepen.io/cosformula/embed/ZgqryL?default-tab=html%2Cresult"
+  frameBorder="no"
+  loading="lazy"
+  allowTransparency="true"
+  allowFullScreen="true"
+>
+  See the Pen &lt;a href="https://codepen.io/cosformula/pen/ZgqryL"&gt;
+  Untitled&lt;/a&gt; by formula (&lt;a
+  href="https://codepen.io/cosformula"&gt;@cosformula&lt;/a&gt;) on &lt;a
+  href="https://codepen.io"&gt;CodePen&lt;/a&gt;.
+</iframe>
+
 
 ```HTML
 <style>
@@ -337,7 +353,23 @@ p {
 <h5 class="bg-blue">果果真可爱</h5>
 ```
 
-[https://codepen.io/cosformula/pen/voVdzP](https://codepen.io/cosformula/pen/voVdzP)
+<iframe
+  height={300}
+  style={{ width: "100%" }}
+  scrolling="no"
+  title="Untitled"
+  src="https://codepen.io/cosformula/embed/voVdzP?default-tab=html%2Cresult"
+  frameBorder="no"
+  loading="lazy"
+  allowTransparency="true"
+  allowFullScreen="true"
+>
+  See the Pen &lt;a href="https://codepen.io/cosformula/pen/voVdzP"&gt;
+  Untitled&lt;/a&gt; by formula (&lt;a
+  href="https://codepen.io/cosformula"&gt;@cosformula&lt;/a&gt;) on &lt;a
+  href="https://codepen.io"&gt;CodePen&lt;/a&gt;.
+</iframe>
+
 
   
 
@@ -354,7 +386,11 @@ p {
 <p class="bg-blue red">果果真可爱</p>
 ```
 
-[https://codepen.io/cosformula/pen/voVdQM](https://codepen.io/cosformula/pen/voVdQM)
+<iframe height="300" style="width: 100%;" scrolling="no" title="Untitled" src="https://codepen.io/cosformula/embed/voVdQM?default-tab=html%2Cresult" frameborder="no" loading="lazy" allowtransparency="true" allowfullscreen="true">
+  See the Pen <a href="https://codepen.io/cosformula/pen/voVdQM">
+  Untitled</a> by formula (<a href="https://codepen.io/cosformula">@cosformula</a>)
+  on <a href="https://codepen.io">CodePen</a>.
+</iframe>
 
 ### 属性选择器、伪类选择器、组合器...
 
