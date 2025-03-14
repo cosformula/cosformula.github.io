@@ -57,11 +57,23 @@ Last Edited: 2019-08-13T20:07
 
 
 
-<iframe height="300" style="width: 100%;" scrolling="no" title="Untitled" src="https://codepen.io/cosformula/embed/xvydPY?default-tab=html%2Cresult" frameborder="no" loading="lazy" allowtransparency="true" allowfullscreen="true">
-  See the Pen <a href="https://codepen.io/cosformula/pen/xvydPY">
-  Untitled</a> by formula (<a href="https://codepen.io/cosformula">@cosformula</a>)
-  on <a href="https://codepen.io">CodePen</a>.
+<iframe
+  height={300}
+  style={{ width: "100%" }}
+  scrolling="no"
+  title="Untitled"
+  src="https://codepen.io/cosformula/embed/xvydPY?default-tab=html%2Cresult"
+  frameBorder="no"
+  loading="lazy"
+  allowTransparency="true"
+  allowFullScreen="true"
+>
+  See the Pen &lt;a href="https://codepen.io/cosformula/pen/xvydPY"&gt;
+  Untitled&lt;/a&gt; by formula (&lt;a
+  href="https://codepen.io/cosformula"&gt;@cosformula&lt;/a&gt;) on &lt;a
+  href="https://codepen.io"&gt;CodePen&lt;/a&gt;.
 </iframe>
+
 
 > [!important] h1元素在屏幕上呈现为更大号的粗体字体，h1元素的上下边距似乎也更大。
 
@@ -386,11 +398,23 @@ p {
 <p class="bg-blue red">果果真可爱</p>
 ```
 
-<iframe height="300" style="width: 100%;" scrolling="no" title="Untitled" src="https://codepen.io/cosformula/embed/voVdQM?default-tab=html%2Cresult" frameborder="no" loading="lazy" allowtransparency="true" allowfullscreen="true">
-  See the Pen <a href="https://codepen.io/cosformula/pen/voVdQM">
-  Untitled</a> by formula (<a href="https://codepen.io/cosformula">@cosformula</a>)
-  on <a href="https://codepen.io">CodePen</a>.
+<iframe
+  height={300}
+  style={{ width: "100%" }}
+  scrolling="no"
+  title="Untitled"
+  src="https://codepen.io/cosformula/embed/voVdQM?default-tab=html%2Cresult"
+  frameBorder="no"
+  loading="lazy"
+  allowTransparency="true"
+  allowFullScreen="true"
+>
+  See the Pen &lt;a href="https://codepen.io/cosformula/pen/voVdQM"&gt;
+  Untitled&lt;/a&gt; by formula (&lt;a
+  href="https://codepen.io/cosformula"&gt;@cosformula&lt;/a&gt;) on &lt;a
+  href="https://codepen.io"&gt;CodePen&lt;/a&gt;.
 </iframe>
+
 
 ### 属性选择器、伪类选择器、组合器...
 
