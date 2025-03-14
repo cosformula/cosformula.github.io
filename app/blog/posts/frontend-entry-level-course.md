@@ -435,7 +435,23 @@ p {
 <p class="red" id="guoguo">果果真可爱</p>
 ```
 
-[https://codepen.io/cosformula/pen/bXmLzE](https://codepen.io/cosformula/pen/bXmLzE)
+<iframe
+  height={300}
+  style={{ width: "100%" }}
+  scrolling="no"
+  title="Untitled"
+  src="https://codepen.io/cosformula/embed/bXmLzE?default-tab=html%2Cresult"
+  frameBorder="no"
+  loading="lazy"
+  allowTransparency="true"
+  allowFullScreen="true"
+>
+  See the Pen &lt;a href="https://codepen.io/cosformula/pen/bXmLzE"&gt;
+  Untitled&lt;/a&gt; by formula (&lt;a
+  href="https://codepen.io/cosformula"&gt;@cosformula&lt;/a&gt;) on &lt;a
+  href="https://codepen.io"&gt;CodePen&lt;/a&gt;.
+</iframe>
+
 
 ```HTML
 <style>
@@ -446,7 +462,23 @@ p {
 <p class="red" id="guoguo"><span>果果</span>真可爱</p>
 ```
 
-[https://codepen.io/cosformula/pen/YmJeBg](https://codepen.io/cosformula/pen/YmJeBg)
+<iframe
+  height={300}
+  style={{ width: "100%" }}
+  scrolling="no"
+  title="Untitled"
+  src="https://codepen.io/cosformula/embed/YmJeBg?default-tab=html%2Cresult"
+  frameBorder="no"
+  loading="lazy"
+  allowTransparency="true"
+  allowFullScreen="true"
+>
+  See the Pen &lt;a href="https://codepen.io/cosformula/pen/YmJeBg"&gt;
+  Untitled&lt;/a&gt; by formula (&lt;a
+  href="https://codepen.io/cosformula"&gt;@cosformula&lt;/a&gt;) on &lt;a
+  href="https://codepen.io"&gt;CodePen&lt;/a&gt;.
+</iframe>
+
 
 ```HTML
 <style>
@@ -460,7 +492,23 @@ span {
 <p class="red" id="guoguo"><span>果果</span>真可爱</p>
 ```
 
-[https://codepen.io/cosformula/pen/NQOyJN](https://codepen.io/cosformula/pen/NQOyJN)
+<iframe
+  height={300}
+  style={{ width: "100%" }}
+  scrolling="no"
+  title="Untitled"
+  src="https://codepen.io/cosformula/embed/NQOyJN?default-tab=html%2Cresult"
+  frameBorder="no"
+  loading="lazy"
+  allowTransparency="true"
+  allowFullScreen="true"
+>
+  See the Pen &lt;a href="https://codepen.io/cosformula/pen/NQOyJN"&gt;
+  Untitled&lt;/a&gt; by formula (&lt;a
+  href="https://codepen.io/cosformula"&gt;@cosformula&lt;/a&gt;) on &lt;a
+  href="https://codepen.io"&gt;CodePen&lt;/a&gt;.
+</iframe>
+
 
   
 
@@ -544,7 +592,23 @@ function appendElement() {
 <button onclick="appendElement()">append</button>
 ```
 
-[https://codepen.io/cosformula/pen/NQOYGb](https://codepen.io/cosformula/pen/NQOYGb)
+<iframe
+  height={300}
+  style={{ width: "100%" }}
+  scrolling="no"
+  title="Untitled"
+  src="https://codepen.io/cosformula/embed/NQOYGb?default-tab=html%2Cresult"
+  frameBorder="no"
+  loading="lazy"
+  allowTransparency="true"
+  allowFullScreen="true"
+>
+  See the Pen &lt;a href="https://codepen.io/cosformula/pen/NQOYGb"&gt;
+  Untitled&lt;/a&gt; by formula (&lt;a
+  href="https://codepen.io/cosformula"&gt;@cosformula&lt;/a&gt;) on &lt;a
+  href="https://codepen.io"&gt;CodePen&lt;/a&gt;.
+</iframe>
+
 
 # 网络  
   
