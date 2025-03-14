@@ -1,4 +1,0 @@
----
-share: true
----
-test
