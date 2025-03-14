@@ -24,11 +24,31 @@ Last Edited: 2019-08-13T20:07
 <p>果果真可爱！</p>
 ```
 
-<iframe height="300" style="width: 100%;" scrolling="no" title="Untitled" src="https://codepen.io/cosformula/embed/xvydPY?default-tab=html%2Cresult" frameborder="no" loading="lazy" allowtransparency="true" allowfullscreen="true">
-  See the Pen <a href="https://codepen.io/cosformula/pen/xvydPY">
-  Untitled</a> by formula (<a href="https://codepen.io/cosformula">@cosformula</a>)
-  on <a href="https://codepen.io">CodePen</a>.
-</iframe>
+<p
+  className="codepen"
+  data-height={300}
+  data-default-tab="html,result"
+  data-slug-hash="xvydPY"
+  data-pen-title="Untitled"
+  data-user="cosformula"
+  style={{
+    height: 300,
+    boxSizing: "border-box",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    border: "2px solid",
+    margin: "1em 0",
+    padding: "1em"
+  }}
+>
+  <span>
+    See the Pen <a href="https://codepen.io/cosformula/pen/xvydPY">Untitled</a>{" "}
+    by formula (<a href="https://codepen.io/cosformula">@cosformula</a>) on{" "}
+    <a href="https://codepen.io">CodePen</a>.
+  </span>
+</p>
+
 
 ### 元素拆解
 
