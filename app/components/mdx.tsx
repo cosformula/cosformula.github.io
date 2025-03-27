@@ -45,7 +45,7 @@ function CustomLink(props) {
 }
 
 function RoundedImage(props) {
-  return <Image alt={props.alt} className="rounded-lg" {...props} />
+  return <Image alt={props.alt} fill className="rounded-lg" {...props} />
 }
 
 function Code({ children, ...props }) {
@@ -94,6 +94,7 @@ let components = {
   h5: createHeading(5),
   h6: createHeading(6),
   Image: RoundedImage,
+  // img: RoundedImage,
   a: CustomLink,
   code: Code,
   Table,
