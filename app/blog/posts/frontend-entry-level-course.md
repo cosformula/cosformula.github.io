@@ -1,10 +1,9 @@
 ---
 title: 前端入门课
 share: true
-path: app/blog/posts
-pathname: frontend-entry-level-course
+category: app/blog/posts
+filename: frontend-entry-level-course
 publishedAt: 2019-08-13
-Last Edited: 2019-08-13T20:07
 ---
 # **HTML**
 
@@ -44,7 +43,7 @@ Last Edited: 2019-08-13T20:07
 
 ### 元素拆解
 
-![/images/Untitled 43.png](/images/Untitled%2043.png)
+![/images/Untitled 43.png](/static/images/frontend-entry-level-course/Untitled%2043.png)
 
   
 
@@ -207,7 +206,7 @@ HTML的全称是**H**yper **T**ext **M**arkup **L**anguage，意思是超文本�
 
 当时在CERN，蒂姆·伯纳斯-李希望一个能够方便地进行技术文档管理、发布和交换（当时他们可能只能通过拷贝磁盘来交换文档），HTML提供了简洁的语法来让任何人都能方便地发布文档，结合超链接（a标签）更加促进了信息交换的效率。
 
-![/images/Untitled 1 22.png](/images/Untitled%201%2022.png)
+![/images/Untitled 1 22.png](/static/images/frontend-entry-level-course/first-web-page.png)
 
 第一个网站
 
@@ -259,13 +258,13 @@ HTML的全称是**H**yper **T**ext **M**arkup **L**anguage，意思是超文本�
 </html>
 ```
 
-![/images/Untitled 2 17.png](/images/Untitled%202%2017.png)
+![/images/Untitled 2 17.png](/static/images/frontend-entry-level-course/Untitled%202%2017.png)
 
 这是DOM树
 
   
 
-![/images/Untitled 3 13.png](/images/Untitled%203%2013.png)
+![/images/Untitled 3 13.png](/static/images/frontend-entry-level-course/Untitled%203%2013.png)
 
 倒过来是一颗🌲了吧
 
@@ -304,7 +303,7 @@ p {
 
   
 
-![/images/Untitled 4 12.png](/images/Untitled%204%2012.png)
+![/images/Untitled 4 12.png](/static/images/frontend-entry-level-course/Untitled%204%2012.png)
 
 这样的结构被称为一个规则集
 
@@ -516,13 +515,13 @@ span {
 
   
 
-![/images/Untitled 5 8.png](/images/Untitled%205%208.png)
+![/images/Untitled 5 8.png](/static/images/frontend-entry-level-course/Untitled%205%208.png)
 
   
 
-![/images/Untitled 6 8.png](/images/Untitled%206%208.png)
+![/images/Untitled 6 8.png](/static/images/frontend-entry-level-course/Untitled%206%208.png)
 
-![/images/Untitled 7 7.png](/images/Untitled%207%207.png)
+![/images/Untitled 7 7.png](/static/images/frontend-entry-level-course/Untitled%207%207.png)
 
 ```HTML
 <style>
