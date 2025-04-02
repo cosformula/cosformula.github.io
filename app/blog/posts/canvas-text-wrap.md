@@ -3,7 +3,7 @@ title: HTML canvas文本换行的问题
 share: true
 category: app/blog/posts
 filename: canvas-text-wrap
-publishedAt: 2022-01-29
+publishedAt: 2020-03-01
 tags:
   - canvas
   - 前端
