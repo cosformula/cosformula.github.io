@@ -1,10 +1,11 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { MDXRemote } from 'next-mdx-remote/rsc'
+// import { MDXRemote } from 'next-mdx-remote'
 import { highlight } from 'sugar-high'
 import React, { ComponentProps } from 'react'
 import remarkMath from 'remark-math'
-import remarkGfm from 'remark-gfm'
+// import remarkGfm from 'remark-gfm'
 // import rehypeRaw from 'rehype-raw'
 import remarkCallout from "@r4ai/remark-callout";
 // import remarkObsidian from 'remark-obsidian';
