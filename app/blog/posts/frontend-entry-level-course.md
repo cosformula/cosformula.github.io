@@ -608,28 +608,10 @@ function appendElement() {
   href="https://codepen.io"&gt;CodePen&lt;/a&gt;.
 </iframe>
 
-
-# 网络  
-  
-
-## HTTP协议
-
-  
-
-## XHR
-
-  
-
-# Single Page Application
-
-  
-
 # 一些建议
 
 - 不要关注细枝末节，例如你**不**需要背会所有的HTML标签，也**不**需要背会所有的CSS属性，但你可能需要知道他在那里，在需要的时候你也知道去哪里了解更多信息。
 - 像学习任何语言一样学习JavaScript。
-
-  
 
 # 课后作业
 
