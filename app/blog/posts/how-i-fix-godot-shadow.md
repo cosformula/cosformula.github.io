@@ -451,7 +451,7 @@ float textureProjSimulated(highp sampler2DShadow shadow, vec4 pos) {
 
 那么其他API有没有这个问题呢？我在OpenGL的文档里看到了`textureProjLod`：
 
-![CleanShot 2025-04-05 at 05.12.21@2x](/CleanShot%202025-04-05%20at%2005.12.21@2x.png)
+![CleanShot 2025-04-05 at 05.12.21@2x.png](/static/images/how-i-fix-godot-shadow/CleanShot%202025-04-05%20at%2005.12.21@2x.png)
 
 我尝试用`textureProjLod`替换`textureProj`，这个问题居然也神奇地解决了！也就是说，只有`textureProj`这一个API有问题。
 
@@ -474,17 +474,17 @@ float textureProjSimulated(highp sampler2DShadow shadow, vec4 pos) {
 
 于是我打开了一个[PR](https://github.com/godotengine/godot/pull/94556)，这个PR在3天后被Merge到主分支，完成了我对Godot的第一次贡献。
 
-![CleanShot 2025-04-05 at 05.31.35@2x](/CleanShot%202025-04-05%20at%2005.31.35@2x.png)
+![CleanShot 2025-04-05 at 05.31.35@2x.png](/static/images/how-i-fix-godot-shadow/CleanShot%202025-04-05%20at%2005.31.35@2x.png)
 
 ## 后续
 
 当时我同时也将这个问题报告给了Chrome、Safari和ANGLE。在一个多月后，开发人员确认在新的Chromium中修复了该问题：
 
-![CleanShot 2025-04-05 at 05.33.51@2x](/CleanShot%202025-04-05%20at%2005.33.51@2x.png)
+![CleanShot 2025-04-05 at 05.33.51@2x.png](/static/images/how-i-fix-godot-shadow/CleanShot%202025-04-05%20at%2005.33.51@2x.png)
 
 
 Godot 4.3于8月15日正式发布，我被合入的修复也随着发布，Godot项目照例会在大版本更新里认真写一篇面向用户的更新日志，本来没有想到，在结尾看到了我的名字还是感慨万分。
 
 想起那天，看到浏览器窗口里消失的阴影的一脸茫然的我，一定没有想到会是这样的结局。
 
-![CleanShot 2025-04-05 at 05.38.47@2x](/CleanShot%202025-04-05%20at%2005.38.47@2x.png)
+![CleanShot 2025-04-05 at 05.38.47@2x.png](/static/images/how-i-fix-godot-shadow/CleanShot%202025-04-05%20at%2005.38.47@2x.png)
