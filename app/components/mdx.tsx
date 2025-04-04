@@ -8,6 +8,7 @@ import remarkMath from 'remark-math'
 // import remarkGfm from 'remark-gfm'
 // import rehypeRaw from 'rehype-raw'
 import remarkCallout from "@r4ai/remark-callout";
+import remarkToc from 'remark-toc'
 // import remarkObsidian from 'remark-obsidian';
 // import remarkObsidian from '@thecae/remark-obsidian';
 
@@ -129,6 +130,7 @@ export function CustomMDX(props) {
         mdxOptions: {
           remarkPlugins: [
             remarkMath,
+            // remarkToc,
             // remarkGfm,
             remarkCallout,
             // remarkObsidian
