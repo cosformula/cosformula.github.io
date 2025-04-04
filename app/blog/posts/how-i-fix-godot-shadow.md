@@ -383,7 +383,7 @@ float sample_shadow(highp sampler2DShadow shadow, float shadow_pixel_size, vec4 
 
 我开始在其他库中寻找`textureProj`。
 
-## 寻找`textureProj`
+## 寻找textureProj
 
 我在其他知名3D框架中以`textureProj`为关键字查询，在使用较为广泛的ThreeJS和BabylonJS竟然都**没有找到对这个API的使用**。
 
