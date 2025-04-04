@@ -5,19 +5,19 @@ category: app/blog/posts
 filename: frontend-entry-level-course
 publishedAt: 2019-08-13
 ---
-# **HTML**
+## **HTML**
 
-## 标签、内容、元素
+### 标签、内容、元素
 
   
 
-### 什么是HTML？
+#### 什么是HTML？
 
 > HTML是一种用于定义内容结构的标记语言。HTML 由一系列的**元素**组成，这些**元素**可以用来包围不同部分的内容，使其以某种方式**呈现**或者**工作**。
 
   
 
-### 什么是元素？
+#### 什么是元素？
 
 ```HTML
 <p>果果真可爱！</p>
@@ -41,13 +41,13 @@ publishedAt: 2019-08-13
 </iframe>
 
 
-### 元素拆解
+#### 元素拆解
 
 ![/images/Untitled 43.png](/static/images/frontend-entry-level-course/Untitled%2043.png)
 
   
 
-### 不妨认识一个新元素
+#### 不妨认识一个新元素
 
 ```HTML
 <h1>果果</h1>
@@ -78,7 +78,7 @@ publishedAt: 2019-08-13
 
   
 
-### 不妨认识多一点
+#### 不妨认识多一点
 
 ```HTML
 <h1>猫猫</h1>
@@ -112,7 +112,7 @@ publishedAt: 2019-08-13
 
   
 
-### 来认识元素属性
+#### 来认识元素属性
 
 我们通过引入一个新标签来认识元素属性。
 
@@ -150,7 +150,7 @@ publishedAt: 2019-08-13
 
   
 
-### 来认识超链接
+#### 来认识超链接
 
 ```HTML
 <h1>果果</h1>
@@ -179,13 +179,13 @@ publishedAt: 2019-08-13
 
   
 
-### 嵌套
+#### 嵌套
 
 在刚刚的例子里，a元素实际上与内容一同被包裹在p标签内，我们把这个称为元素的嵌套。嵌套比起其他的概念可能稍微抽象一些，我们也许可以这样理解：元素内的内容可以是纯文字，也可以是纯文字+其他元素。
 
   
 
-### 复习
+#### 复习
 
 - HTML由可嵌套的元素组成
 - 元素由开始标签结束标签包裹内容而成
@@ -193,14 +193,14 @@ publishedAt: 2019-08-13
 
   
 
-### 接下来是...
+#### 接下来是...
 
 - 认识其他的HTML标签，熟悉他们如何在屏幕上呈现或者如何工作
 - 认识其他的元素属性
 
   
 
-### 学到这里，你对HTML的理解已经表达完了🐶
+#### 学到这里，你对HTML的理解已经表达完了🐶
 
 HTML的全称是**H**yper **T**ext **M**arkup **L**anguage，意思是超文本标记语言，在1990年诞生于CERN。
 
@@ -222,7 +222,7 @@ HTML的全称是**H**yper **T**ext **M**arkup **L**anguage，意思是超文本�
 
   
 
-### 一个标准的HTML5网页
+#### 一个标准的HTML5网页
 
 ```HTML
 <!DOCTYPE html>
@@ -243,7 +243,7 @@ HTML的全称是**H**yper **T**ext **M**arkup **L**anguage，意思是超文本�
 
   
 
-### DOM树
+#### DOM树
 
 ```HTML
 <!DOCTYPE html>
@@ -268,7 +268,7 @@ HTML的全称是**H**yper **T**ext **M**arkup **L**anguage，意思是超文本�
 
 倒过来是一颗🌲了吧
 
-# **CSS**
+## **CSS**
 
 在HTML刚刚诞生的时候是没有CSS的，原因很显然，那时候的计算机不太方便显示除了文字以外的东西，对于普通的电子文档，有换行，缩进已经足够。
 
@@ -286,7 +286,7 @@ HTML的全称是**H**yper **T**ext **M**arkup **L**anguage，意思是超文本�
 
   
 
-## 回到果果的例子
+### 回到果果的例子
 
 ```HTML
 <style>
@@ -311,7 +311,7 @@ p {
 
   
 
-### 简单选择器：标签选择器、类选择器、ID选择器
+#### 简单选择器：标签选择器、类选择器、ID选择器
 
 ```HTML
 <style>
@@ -415,11 +415,11 @@ p {
 </iframe>
 
 
-### 属性选择器、伪类选择器、组合器...
+#### 属性选择器、伪类选择器、组合器...
 
 留作习题
 
-### 优先级与继承
+#### 优先级与继承
 
 ```HTML
 <style>
@@ -511,7 +511,7 @@ span {
 
   
 
-### 盒模型
+#### 盒模型
 
   
 
@@ -550,7 +550,7 @@ css.appendChild(document.createTextNode('* {border: 1px solid red !important;}')
 document.getElementsByTagName("head")[0].appendChild(css);
 ```
 
-### 接下来是...
+#### 接下来是...
 
 - 熟悉常用的CSS选择器
 - 熟悉大多数CSS属性
@@ -559,7 +559,7 @@ document.getElementsByTagName("head")[0].appendChild(css);
 - 一些新东西：flexbox、grid
 - CSS动画
 
-# **JavaScript**
+## **JavaScript**
 
 JavaScript的为网页带来了可交互性，它的出现是为了解决新的问题。在1995，HTML已经不只是为了分享文档（还记得HTML为什么诞生吗），用户可以在一个网站上登录、注册、发表内容。但由于HTML没有任何可以运行的逻辑，当时的网页是纯静态的。
 
@@ -567,7 +567,7 @@ JavaScript的为网页带来了可交互性，它的出现是为了解决新的�
 
 当时网景团队认为网页最终会变得动态，开始尝试在浏览器中引入一些脚本语言，最终他们选定了艾克用了十天左右开发出的脚本语言，并命名为JavaScript。
 
-## DOM
+### DOM
 
 > 文档对象模型 (DOM) 是HTML和XML文档的编程接口。它提供了对文档的结构化的表述，并定义了一种方式可以使从程序中对该结构进行访问，从而改变文档的结构，样式和内容。DOM 将文档解析为一个由节点和对象（包含属性和方法的对象）组成的结构集合。简言之，它会将web页面和脚本或程序语言连接起来。
 
@@ -607,21 +607,3 @@ function appendElement() {
   href="https://codepen.io/cosformula"&gt;@cosformula&lt;/a&gt;) on &lt;a
   href="https://codepen.io"&gt;CodePen&lt;/a&gt;.
 </iframe>
-
-# 一些建议
-
-- 不要关注细枝末节，例如你**不**需要背会所有的HTML标签，也**不**需要背会所有的CSS属性，但你可能需要知道他在那里，在需要的时候你也知道去哪里了解更多信息。
-- 像学习任何语言一样学习JavaScript。
-
-# 课后作业
-
-- 认识所有的html5标签
-- 认识所有的CSS属性
-
-# 几个网站
-
-[https://www.w3school.com.cn/html/index.asp](https://www.w3school.com.cn/html/index.asp)
-
-  
-
----
