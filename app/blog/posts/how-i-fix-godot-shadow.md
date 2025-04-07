@@ -1,5 +1,5 @@
 ---
-title: 消失的定向阴影：一次修复Godot渲染Bug的冒险
+title: 从一无所知到修复了Godot引擎的定向阴影
 share: true
 category: app/blog/posts
 filename: how-i-fix-godot-shadow
@@ -38,6 +38,7 @@ publishedAt: 2025-04-04
 为了确认该问题的影响范围，我在多个平台进行了测试。测试结果是，该问题仅影响搭载Silicon芯片的Mac系统的Chrome、Safari浏览器，其他平台和浏览器正常。也确认了其他类型的阴影，如点光源等不受影响。
 
 我为这个问题创建了一个[issue](https://github.com/godotengine/godot/issues/93537)。但究竟是什么导致了这个问题呢？当时的我对渲染一无所知，但出于好奇，开始寻找答案。
+
 ## 一些无效尝试
 
 本能的，我开始寻找针对WebGL的Debug工具。我找到了由BabylonJS核心贡献者开发的SpectorJS。
@@ -121,202 +122,11 @@ void RasterizerSceneGLES3::_render_shadows(...) {
 }
 ```
 
-简化无关信息后，到目前为止的调用逻辑都很好理解，可以看到，关键应该在于`_render_shadow_pass`函数。我们看看这个函数具体干了什么，我故意保留了所有代码，以让读者体验我的绝望：
+简化无关信息后，到目前为止的调用逻辑都很好理解，可以看到，关键应该在于`_render_shadow_pass`函数。我们看看这个函数具体干了什么，这是一个200行的函数，折叠一些代码分支后大概长这样：
 
-```cpp
-void RasterizerSceneGLES3::_render_shadow_pass(RID p_light, RID p_shadow_atlas, int p_pass, const PagedArray<RenderGeometryInstance *> &p_instances, float p_lod_distance_multiplier, float p_screen_mesh_lod_threshold, RenderingMethod::RenderInfo *p_render_info, const Size2i &p_viewport_size, const Transform3D &p_main_cam_transform) {
-	GLES3::LightStorage *light_storage = GLES3::LightStorage::get_singleton();
+![_render_shadow_pass.png](/static/images/how-i-fix-godot-shadow/_render_shadow_pass.png)
 
-	ERR_FAIL_COND(!light_storage->owns_light_instance(p_light));
-
-	RID base = light_storage->light_instance_get_base_light(p_light);
-
-	float zfar = 0.0;
-	bool use_pancake = false;
-	float shadow_bias = 0.0;
-	bool reverse_cull = false;
-	bool needs_clear = false;
-
-	Projection light_projection;
-	Transform3D light_transform;
-	GLuint shadow_fb = 0;
-	Rect2i atlas_rect;
-
-	if (light_storage->light_get_type(base) == RS::LIGHT_DIRECTIONAL) {
-		// Set pssm stuff.
-		uint64_t last_scene_shadow_pass = light_storage->light_instance_get_shadow_pass(p_light);
-		if (last_scene_shadow_pass != get_scene_pass()) {
-			light_storage->light_instance_set_directional_rect(p_light, light_storage->get_directional_shadow_rect());
-			light_storage->directional_shadow_increase_current_light();
-			light_storage->light_instance_set_shadow_pass(p_light, get_scene_pass());
-		}
-
-		atlas_rect = light_storage->light_instance_get_directional_rect(p_light);
-
-		if (light_storage->light_directional_get_shadow_mode(base) == RS::LIGHT_DIRECTIONAL_SHADOW_PARALLEL_4_SPLITS) {
-			atlas_rect.size.width /= 2;
-			atlas_rect.size.height /= 2;
-
-			if (p_pass == 1) {
-				atlas_rect.position.x += atlas_rect.size.width;
-			} else if (p_pass == 2) {
-				atlas_rect.position.y += atlas_rect.size.height;
-			} else if (p_pass == 3) {
-				atlas_rect.position += atlas_rect.size;
-			}
-		} else if (light_storage->light_directional_get_shadow_mode(base) == RS::LIGHT_DIRECTIONAL_SHADOW_PARALLEL_2_SPLITS) {
-			atlas_rect.size.height /= 2;
-
-			if (p_pass == 0) {
-			} else {
-				atlas_rect.position.y += atlas_rect.size.height;
-			}
-		}
-
-		use_pancake = light_storage->light_get_param(base, RS::LIGHT_PARAM_SHADOW_PANCAKE_SIZE) > 0;
-		light_projection = light_storage->light_instance_get_shadow_camera(p_light, p_pass);
-		light_transform = light_storage->light_instance_get_shadow_transform(p_light, p_pass);
-
-		float directional_shadow_size = light_storage->directional_shadow_get_size();
-		Rect2 atlas_rect_norm = atlas_rect;
-		atlas_rect_norm.position /= directional_shadow_size;
-		atlas_rect_norm.size /= directional_shadow_size;
-		light_storage->light_instance_set_directional_shadow_atlas_rect(p_light, p_pass, atlas_rect_norm);
-
-		zfar = RSG::light_storage->light_get_param(base, RS::LIGHT_PARAM_RANGE);
-		shadow_fb = light_storage->direction_shadow_get_fb();
-		reverse_cull = !light_storage->light_get_reverse_cull_face_mode(base);
-
-		float bias_scale = light_storage->light_instance_get_shadow_bias_scale(p_light, p_pass);
-		shadow_bias = light_storage->light_get_param(base, RS::LIGHT_PARAM_SHADOW_BIAS) / 100.0 * bias_scale;
-
-	} else {
-		// Set from shadow atlas.
-
-		ERR_FAIL_COND(!light_storage->owns_shadow_atlas(p_shadow_atlas));
-		ERR_FAIL_COND(!light_storage->shadow_atlas_owns_light_instance(p_shadow_atlas, p_light));
-
-		uint32_t key = light_storage->shadow_atlas_get_light_instance_key(p_shadow_atlas, p_light);
-
-		uint32_t quadrant = (key >> GLES3::LightStorage::QUADRANT_SHIFT) & 0x3;
-		uint32_t shadow = key & GLES3::LightStorage::SHADOW_INDEX_MASK;
-
-		ERR_FAIL_INDEX((int)shadow, light_storage->shadow_atlas_get_quadrant_shadows_length(p_shadow_atlas, quadrant));
-
-		int shadow_size = light_storage->shadow_atlas_get_quadrant_shadow_size(p_shadow_atlas, quadrant);
-
-		shadow_fb = light_storage->shadow_atlas_get_quadrant_shadow_fb(p_shadow_atlas, quadrant, shadow);
-
-		zfar = light_storage->light_get_param(base, RS::LIGHT_PARAM_RANGE);
-		reverse_cull = !light_storage->light_get_reverse_cull_face_mode(base);
-
-		if (light_storage->light_get_type(base) == RS::LIGHT_OMNI) {
-			if (light_storage->light_omni_get_shadow_mode(base) == RS::LIGHT_OMNI_SHADOW_CUBE) {
-				GLuint shadow_texture = light_storage->shadow_atlas_get_quadrant_shadow_texture(p_shadow_atlas, quadrant, shadow);
-				glBindFramebuffer(GL_FRAMEBUFFER, shadow_fb);
-
-				static GLenum cube_map_faces[6] = {
-					GL_TEXTURE_CUBE_MAP_POSITIVE_X,
-					GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
-					// Flipped order for Y to match what the RD renderer expects
-					// (and thus what is given to us by the Rendering Server).
-					GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
-					GL_TEXTURE_CUBE_MAP_POSITIVE_Y,
-					GL_TEXTURE_CUBE_MAP_POSITIVE_Z,
-					GL_TEXTURE_CUBE_MAP_NEGATIVE_Z
-				};
-
-				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, cube_map_faces[p_pass], shadow_texture, 0);
-
-				light_projection = light_storage->light_instance_get_shadow_camera(p_light, p_pass);
-				light_transform = light_storage->light_instance_get_shadow_transform(p_light, p_pass);
-				shadow_size = shadow_size / 2;
-			} else {
-				ERR_FAIL_MSG("Dual paraboloid shadow mode not supported in GL Compatibility renderer. Please use Cubemap shadow mode instead.");
-			}
-
-			shadow_bias = light_storage->light_get_param(base, RS::LIGHT_PARAM_SHADOW_BIAS);
-
-		} else if (light_storage->light_get_type(base) == RS::LIGHT_SPOT) {
-			light_projection = light_storage->light_instance_get_shadow_camera(p_light, 0);
-			light_transform = light_storage->light_instance_get_shadow_transform(p_light, 0);
-
-			shadow_bias = light_storage->light_get_param(base, RS::LIGHT_PARAM_SHADOW_BIAS) / 10.0;
-			// Prebake range into bias so we can scale based on distance easily.
-			shadow_bias *= light_storage->light_get_param(base, RS::LIGHT_PARAM_RANGE);
-		}
-		atlas_rect.size.x = shadow_size;
-		atlas_rect.size.y = shadow_size;
-
-		needs_clear = true;
-	}
-
-	RenderDataGLES3 render_data;
-	render_data.cam_projection = light_projection;
-	render_data.cam_transform = light_transform;
-	render_data.inv_cam_transform = light_transform.affine_inverse();
-	render_data.z_far = zfar; // Only used by OmniLights.
-	render_data.z_near = 0.0;
-	render_data.lod_distance_multiplier = p_lod_distance_multiplier;
-	render_data.main_cam_transform = p_main_cam_transform;
-
-	render_data.instances = &p_instances;
-	render_data.render_info = p_render_info;
-
-	_setup_environment(&render_data, true, p_viewport_size, false, Color(), use_pancake, shadow_bias);
-
-	if (get_debug_draw_mode() == RS::VIEWPORT_DEBUG_DRAW_DISABLE_LOD) {
-		render_data.screen_mesh_lod_threshold = 0.0;
-	} else {
-		render_data.screen_mesh_lod_threshold = p_screen_mesh_lod_threshold;
-	}
-
-	_fill_render_list(RENDER_LIST_SECONDARY, &render_data, PASS_MODE_SHADOW);
-	render_list[RENDER_LIST_SECONDARY].sort_by_key();
-
-	glBindFramebuffer(GL_FRAMEBUFFER, shadow_fb);
-	glViewport(atlas_rect.position.x, atlas_rect.position.y, atlas_rect.size.x, atlas_rect.size.y);
-
-	GLuint global_buffer = GLES3::MaterialStorage::get_singleton()->global_shader_parameters_get_uniform_buffer();
-
-	glBindBufferBase(GL_UNIFORM_BUFFER, SCENE_GLOBALS_UNIFORM_LOCATION, global_buffer);
-	glBindBuffer(GL_UNIFORM_BUFFER, 0);
-
-	scene_state.reset_gl_state();
-	scene_state.enable_gl_depth_test(true);
-	scene_state.enable_gl_depth_draw(true);
-	glDepthFunc(GL_GREATER);
-
-	glColorMask(0, 0, 0, 0);
-	glDrawBuffers(0, nullptr);
-	RasterizerGLES3::clear_depth(0.0);
-	if (needs_clear) {
-		glClear(GL_DEPTH_BUFFER_BIT);
-	}
-
-	uint64_t spec_constant_base_flags = SceneShaderGLES3::DISABLE_LIGHTMAP |
-			SceneShaderGLES3::DISABLE_LIGHT_DIRECTIONAL |
-			SceneShaderGLES3::DISABLE_LIGHT_OMNI |
-			SceneShaderGLES3::DISABLE_LIGHT_SPOT |
-			SceneShaderGLES3::DISABLE_FOG |
-			SceneShaderGLES3::RENDER_SHADOWS;
-
-	if (light_storage->light_get_type(base) == RS::LIGHT_OMNI) {
-		spec_constant_base_flags |= SceneShaderGLES3::RENDER_SHADOWS_LINEAR;
-	}
-
-	RenderListParameters render_list_params(render_list[RENDER_LIST_SECONDARY].elements.ptr(), render_list[RENDER_LIST_SECONDARY].elements.size(), reverse_cull, spec_constant_base_flags, false);
-
-	_render_list_template<PASS_MODE_SHADOW>(&render_list_params, &render_data, 0, render_list[RENDER_LIST_SECONDARY].elements.size());
-
-	glColorMask(1, 1, 1, 1);
-	scene_state.enable_gl_depth_test(false);
-	scene_state.enable_gl_depth_draw(true);
-	glDisable(GL_CULL_FACE);
-	scene_state.cull_mode = GLES3::SceneShaderData::CULL_DISABLED;
-	glBindFramebuffer(GL_FRAMEBUFFER, GLES3::TextureStorage::system_fbo);
-}
-```
+如果你感兴趣可以在[这里](https://github.com/godotengine/godot/blob/4.2/drivers/gles3/rasterizer_scene_gles3.cpp#L1981)看看完整代码。
 
 你看明白了吗？反正我当时没看明白...于是我去学习了一下定向阴影究竟是如何实现的。
 
@@ -354,7 +164,7 @@ float directional_shadow = sample_shadow(directional_shadow_atlas, directional_s
 
 **点光源为什么可以正常工作呢？** 我们又看到点光源阴影的关键代码：
 
-```
+```glsl
 omni_shadow = texture(omni_shadow_texture, vec4(light_ray, 1.0 - length(light_ray) * omni_lights[omni_light_index].inv_radius));
 ```
 
@@ -362,11 +172,11 @@ omni_shadow = texture(omni_shadow_texture, vec4(light_ray, 1.0 - length(light_ra
 
 我们看看`sample_shadow`做了什么（经过简化，删除了PSSM相关代码路径）：
 
-```
+```glsl
 float sample_shadow(highp sampler2DShadow shadow, float shadow_pixel_size, vec4 pos) {
 	...
 	float avg = textureProj(shadow, pos);
-	...
+	..
 	return avg;
 }
 ```
@@ -393,7 +203,7 @@ float sample_shadow(highp sampler2DShadow shadow, float shadow_pixel_size, vec4 
 
 ![CleanShot 2025-04-05 at 04.45.40@2x.png](/static/images/how-i-fix-godot-shadow/CleanShot%202025-04-05%20at%2004.45.40@2x.png)
 
-## 从picoGL复制的定向阴影代码
+## picoGL立大功
 
 picoGL demo的源代码惊人的简单，我无需做任何简化：
 
@@ -472,6 +282,8 @@ float textureProjSimulated(highp sampler2DShadow shadow, vec4 pos) {
 
 由于担心引入新的问题，我找了一个更复杂的场景，在之前尝试的平台重新测试，既没有发现性能损失，也没有发现新的视觉问题。
 
+![pr-image.png](/static/images/how-i-fix-godot-shadow/pr-image.png)
+
 于是我打开了一个[PR](https://github.com/godotengine/godot/pull/94556)，这个PR在3天后被Merge到主分支，完成了我对Godot的第一次贡献。
 
 ![CleanShot 2025-04-05 at 05.31.35@2x.png](/static/images/how-i-fix-godot-shadow/CleanShot%202025-04-05%20at%2005.31.35@2x.png)
@@ -482,8 +294,7 @@ float textureProjSimulated(highp sampler2DShadow shadow, vec4 pos) {
 
 ![CleanShot 2025-04-05 at 05.33.51@2x.png](/static/images/how-i-fix-godot-shadow/CleanShot%202025-04-05%20at%2005.33.51@2x.png)
 
-
-Godot 4.3于8月15日正式发布，我被合入的修复也随着发布，Godot项目照例会在大版本更新里认真写一篇面向用户的更新日志，本来没有想到，在结尾看到了我的名字还是感慨万分。
+Godot 4.3于8月15日正式发布，我被合入的修复也随着发布，Godot项目照例会在大版本更新里认真写一篇面向用户的更新日志，在结尾看到了我的名字，感慨万分。
 
 想起那天，看到浏览器窗口里消失的阴影的一脸茫然的我，一定没有想到会是这样的结局。
 
