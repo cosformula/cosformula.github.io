@@ -62,6 +62,35 @@ html[data-theme="dark"] {
   @apply underline decoration-wavy decoration-2 underline-offset-4;
 }
 
+/* Custom skin utilities */
+.bg-skin-accent {
+  background-color: var(--color-accent);
+}
+
+.text-skin-accent {
+  color: var(--color-accent);
+}
+
+.text-skin-inverted {
+  color: var(--color-background);
+}
+
+.border-skin-line {
+  border-color: var(--color-border);
+}
+
+.bg-skin-card {
+  background-color: var(--color-background);
+}
+
+.text-skin-base {
+  color: var(--color-foreground);
+}
+
+.bg-skin-fill {
+  background-color: var(--color-muted);
+}
+
 /* Source: https://piccalil.li/blog/a-more-modern-css-reset/ */
 /* Anything that has been anchored to should have extra scroll margin */
 :target {
