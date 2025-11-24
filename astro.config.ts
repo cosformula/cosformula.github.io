@@ -27,8 +27,8 @@ export default defineConfig({
     // 旧URL的重定向规则
     // 英文文章（在 src/data/blog/en/ 目录下的）
     "/blog/how-i-fixed-godot-shadow-en": "/posts/en/how-i-fixed-godot-shadow",
-    "/blog/how-i-fixed-godot-shadow": "/posts/en/how-i-fixed-godot-shadow",
-    "/blog/how-i-fix-godot-shadow": "/posts/en/how-i-fixed-godot-shadow",
+    "/blog/how-i-fixed-godot-shadow": "/posts/zh/how-i-fixed-godot-shadow",
+    "/blog/how-i-fix-godot-shadow": "/posts/zh/how-i-fixed-godot-shadow",
 
     // 中文文章（在 src/data/blog/ 根目录下的）
     "/blog/web-performance": "/zh/posts/web-performance",
