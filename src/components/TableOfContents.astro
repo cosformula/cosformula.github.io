@@ -1,0 +1,142 @@
+---
+export interface Props {
+  headings: {
+    depth: number;
+    slug: string;
+    text: string;
+  }[];
+  lang?: string;
+  hideTitle?: boolean;
+  noBorder?: boolean;
+}
+
+const { headings, lang = 'zh', hideTitle = false, noBorder = false } = Astro.props;
+
+// Filter headings to only show h2 and h3
+const tocHeadings = headings.filter(heading => heading.depth >= 2 && heading.depth <= 3);
+
+const tocTitle = lang === 'zh' ? '目录' : 'Table of Contents';
+---
+
+{tocHeadings.length > 0 && (
+  <nav
+    class:list={[
+      "toc-container",
+      !noBorder && "rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900"
+    ]}
+    aria-label={tocTitle}
+  >
+    <div class={noBorder ? "" : "p-4"}>
+      {!hideTitle && <h2 class="mb-3 text-lg font-semibold">{tocTitle}</h2>}
+      <ul class="space-y-2 text-sm">
+        {tocHeadings.map(heading => (
+          <li
+            class={`toc-item ${heading.depth === 3 ? 'ml-4' : ''}`}
+            data-heading-slug={heading.slug}
+          >
+            <a
+              href={`#${heading.slug}`}
+              class="block py-1 text-skin-accent opacity-80 transition-opacity hover:opacity-100"
+            >
+              {heading.text}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </nav>
+)}
+
+<style>
+  .toc-item.active > a {
+    font-weight: 600;
+    opacity: 1;
+  }
+</style>
+
+<script>
+  function setupTOC() {
+    // Get all TOC containers (both desktop and mobile)
+    const tocContainers = document.querySelectorAll('.toc-container');
+
+    tocContainers.forEach(container => {
+      const tocItems = container.querySelectorAll('.toc-item');
+      const headings = Array.from(document.querySelectorAll('article h2, article h3'));
+
+      if (tocItems.length === 0 || headings.length === 0) return;
+
+      const observerOptions = {
+        rootMargin: '-80px 0px -70% 0px',
+        threshold: 0
+      };
+
+      let currentActiveSlug: string | null = null;
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const id = entry.target.getAttribute('id');
+            if (id && id !== currentActiveSlug) {
+              // Remove active class from all items in this container
+              tocItems.forEach(item => item.classList.remove('active'));
+
+              // Add active class to current item
+              const activeItem = container.querySelector(`.toc-item[data-heading-slug="${id}"]`);
+              if (activeItem) {
+                activeItem.classList.add('active');
+                currentActiveSlug = id;
+              }
+            }
+          }
+        });
+      }, observerOptions);
+
+      // Observe all headings
+      headings.forEach(heading => {
+        if (heading.id) {
+          observer.observe(heading);
+        }
+      });
+
+      // Smooth scroll behavior for TOC links (desktop only)
+      const isDesktop = window.innerWidth >= 1536;
+      if (isDesktop) {
+        tocItems.forEach(item => {
+          const link = item.querySelector('a');
+          if (link) {
+            link.addEventListener('click', (e) => {
+              e.preventDefault();
+              const targetId = link.getAttribute('href')?.slice(1);
+              if (targetId) {
+                const targetElement = document.getElementById(targetId);
+                if (targetElement) {
+                  const offset = 80; // Account for header height
+                  const targetPosition = targetElement.getBoundingClientRect().top + window.scrollY - offset;
+                  window.scrollTo({
+                    top: targetPosition,
+                    behavior: 'smooth'
+                  });
+                }
+              }
+            });
+          }
+        });
+      }
+
+      // Clean up on navigation
+      document.addEventListener('astro:before-swap', () => {
+        observer.disconnect();
+      });
+    });
+  }
+
+  // Initialize on page load
+  document.addEventListener('astro:page-load', setupTOC);
+
+  // Also initialize immediately if DOM is ready
+  if (document.readyState !== 'loading') {
+    setupTOC();
+  } else {
+    document.addEventListener('DOMContentLoaded', setupTOC);
+  }
+</script>

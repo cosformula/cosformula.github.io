@@ -14,7 +14,6 @@ HTML canvas 绘制文本时不支持换行，一般情况下可以通过 html2ca
 
 这篇文章介绍了 canvas 文本渲染的基础知识、贪心算法实现自动换行、Unicode 换行算法/CSS 标准中的换行以及 html2canvas 能够正确渲染文本换行的原理。
 
-## Contents
 ## **基础知识**
 
 这章将介绍 canvas2D 文本绘制的一些基础知识，如果你对这些已经很熟悉可以跳过。
@@ -29,12 +28,14 @@ void ctx.fillText(text, x, y [, maxWidth]);
 
 如果指定了 maxWidth，绘制字符串实际渲染长度超出`maxWidth`时，文本会进行自适应缩放。
 
-可以在下面的 codepen 里体验三个参数的作用。
+可以在下面的示例中体验三个参数的作用。
 
-import CodeViewer from '~/components/CodeViewer.astro';
+import CodeViewer from '@/components/CodeViewer.astro';
 
 <CodeViewer
   title="fillText"
+  defaultShowCode={true}
+  defaultTab="js"
   html={`<div class="wrap">
   <canvas id="canvas" width="900" height="300"></canvas>
   <form id="form">
@@ -103,10 +104,125 @@ ctx.measureText(text)
 
 参数`text`为要测量的字符串，该方法会返回`TextMetrics`对象，`TextMetrics`对象包含`width`属性。通过这样的代码可以测量指定字符串绘制后的宽度。
 
-```JavaScript
-var text = ctx.measureText('foo') // TextMetrics object
-text.width // 16;
-```
+<CodeViewer
+  title="measureText 测量文本宽度"
+  height="200px"
+  defaultShowCode={true}
+  defaultTab="js"
+  html={`<div class="container">
+  <canvas id="canvas" width="600" height="150"></canvas>
+  <div class="controls">
+    <label for="textInput">输入文本:</label>
+    <input type="text" id="textInput" value="Hello World" />
+    <label for="fontInput">字体设置:</label>
+    <input type="text" id="fontInput" value="24px serif" />
+    <button id="measureBtn">测量宽度</button>
+  </div>
+  <div id="result"></div>
+</div>`}
+  css={`
+.container {
+  padding: 20px;
+  font-family: sans-serif;
+}
+#canvas {
+  border: 1px solid #ccc;
+  display: block;
+  margin-bottom: 15px;
+  width: 100%;
+  height: 50px;
+}
+.controls {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+.controls label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.controls input {
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+}
+#measureBtn {
+  padding: 5px 15px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+#measureBtn:hover {
+  background: #0056b3;
+}
+#result {
+  padding: 10px;
+  background: #f0f0f0;
+  border-radius: 3px;
+  font-family: monospace;
+}
+`}
+  js={`
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const textInput = document.getElementById('textInput');
+const fontInput = document.getElementById('fontInput');
+const measureBtn = document.getElementById('measureBtn');
+const result = document.getElementById('result');
+
+ctx.scale(2, 2);
+
+function measureAndDraw() {
+  // 清空画布
+  ctx.clearRect(0, 0, 300, 75);
+
+  const text = textInput.value;
+  const font = fontInput.value;
+
+  ctx.font = font;
+  ctx.textBaseline = 'middle';
+
+  // 测量文本
+  const metrics = ctx.measureText(text);
+  const width = metrics.width;
+
+  // 绘制文本
+  ctx.fillStyle = 'black';
+  ctx.fillText(text, 10, 37);
+
+  // 绘制测量线
+  ctx.strokeStyle = 'red';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(10, 50);
+  ctx.lineTo(10 + width, 50);
+  ctx.stroke();
+
+  // 绘制起止标记
+  ctx.beginPath();
+  ctx.moveTo(10, 45);
+  ctx.lineTo(10, 55);
+  ctx.moveTo(10 + width, 45);
+  ctx.lineTo(10 + width, 55);
+  ctx.stroke();
+
+  // 显示结果
+  result.innerHTML = \`var metrics = ctx.measureText('\${text}');<br>
+metrics.width = \${width.toFixed(2)}px;\`;
+}
+
+measureBtn.addEventListener('click', measureAndDraw);
+textInput.addEventListener('input', measureAndDraw);
+fontInput.addEventListener('input', measureAndDraw);
+
+// 初始化
+measureAndDraw();
+`}
+/>
 
 ## **使用贪心算法实现自动换行**
 
@@ -114,58 +230,208 @@ text.width // 16;
 
 按照这样的思路将文本处理为换行后的字符串列表，列表中的每一项都代表实际渲染的单行文本，最后再调用`fillText`依次渲染即可。
 
-```JavaScript
-const text = 'Hello World'
+<CodeViewer
+  title="贪心算法基础实现"
+  height="400px"
+  defaultShowCode={true}
+  defaultTab="js"
+  html={`<div class="container">
+  <div class="input-section">
+    <label for="textArea">输入文本（支持换行符）:</label>
+    <textarea id="textArea" rows="3">Hello World! 这是一段测试文本，用来演示贪心算法的自动换行功能。
+可以输入多行文本，算法会自动处理换行符。</textarea>
+    <div class="controls">
+      <label>最大宽度: <input type="range" id="widthSlider" min="100" max="400" value="200"> <span id="widthValue">200</span>px</label>
+      <label>字体大小: <input type="range" id="fontSlider" min="10" max="24" value="14"> <span id="fontValue">14</span>px</label>
+    </div>
+  </div>
+  <div class="output-section">
+    <div class="canvas-wrapper">
+      <canvas id="canvas" width="900" height="600"></canvas>
+    </div>
+    <div class="debug-info">
+      <h4>算法调试信息:</h4>
+      <div id="debugOutput"></div>
+    </div>
+  </div>
+</div>`}
+  css={`
+.container {
+  padding: 15px;
+  font-family: sans-serif;
+}
+.input-section {
+  margin-bottom: 15px;
+}
+#textArea {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-family: sans-serif;
+  margin: 5px 0;
+}
+.controls {
+  display: flex;
+  gap: 20px;
+  margin-top: 10px;
+}
+.controls label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.controls input[type="range"] {
+  width: 100px;
+}
+.output-section {
+  display: flex;
+  gap: 20px;
+}
+.canvas-wrapper {
+  flex: 1;
+}
+#canvas {
+  border: 1px solid #ccc;
+  width: 100%;
+  height: 200px;
+  background: white;
+}
+.debug-info {
+  flex: 1;
+  padding: 10px;
+  background: #f5f5f5;
+  border-radius: 4px;
+  font-size: 12px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+.debug-info h4 {
+  margin: 0 0 10px 0;
+  font-size: 14px;
+}
+#debugOutput {
+  font-family: monospace;
+  white-space: pre-wrap;
+  line-height: 1.4;
+}
+`}
+  js={`
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const textArea = document.getElementById('textArea');
+const widthSlider = document.getElementById('widthSlider');
+const widthValue = document.getElementById('widthValue');
+const fontSlider = document.getElementById('fontSlider');
+const fontValue = document.getElementById('fontValue');
+const debugOutput = document.getElementById('debugOutput');
+
+ctx.scale(3, 3);
 
 // 计算文本应当在何时换行，返回换行处理后的字符串列表
 function calculateTextWrapLines(ctx, text, maxWidth) {
   let lines = []
-  //
   let words = text.split('')
   let line = ''
+  let debugInfo = []
 
   for (let i = 0; i < words.length; i++) {
     const word = words[i]
     const testLine = line + word
     const { width: measuredWidth } = ctx.measureText(testLine)
+
     if (measuredWidth > maxWidth) {
+      debugInfo.push(\`行 \${lines.length + 1}: "\${line}" (宽度: \${ctx.measureText(line).width.toFixed(1)}px)\`)
       lines.push(line)
-      // 最后一个词是下一行的行首
       line = word
     } else {
       line = testLine
     }
   }
-  // 循环结束时，可能还有字符在缓冲区，把剩下的字符当作最后一行
-  line.length && lines.push(line)
-  return lines
+
+  if (line.length) {
+    debugInfo.push(\`行 \${lines.length + 1}: "\${line}" (宽度: \${ctx.measureText(line).width.toFixed(1)}px)\`)
+    lines.push(line)
+  }
+
+  return { lines, debugInfo }
 }
 
-// 调用换行处理函数处理文本换行，
-function fillTextWrap(ctx, { text, x, y, width }) {
-  // 支持换行符
-  const paragraphs = text.split('\n')
-  // 将\n分割后的段落交给calculateTextWrapLines处理为换行后的字符串列表
-  const lines = paragraphs.reduce((acc, cur) => {
-    acc.push(...calculateTextWrapLines(ctx, cur, width))
-    return acc
-  }, [])
-  lines.map((line, index) => {
-    // 绘制单行文本，这里使用了lineHeight计算第x行文本的y位置
-    ctx.fillText(line, x, y + index * ctx.lineHeight)
+// 调用换行处理函数处理文本换行
+function fillTextWrap(ctx, { text, x, y, width, lineHeight }) {
+  const paragraphs = text.split('\\n')
+  let allLines = []
+  let allDebugInfo = []
+
+  paragraphs.forEach((paragraph, pIndex) => {
+    if (paragraph.length > 0) {
+      const { lines, debugInfo } = calculateTextWrapLines(ctx, paragraph, width)
+      allLines.push(...lines)
+      if (pIndex > 0) allDebugInfo.push('---')
+      allDebugInfo.push(\`段落 \${pIndex + 1}:\`)
+      allDebugInfo.push(...debugInfo)
+    } else {
+      allLines.push('') // 空行
+    }
   })
+
+  // 绘制所有行
+  allLines.forEach((line, index) => {
+    ctx.fillText(line, x, y + index * lineHeight)
+  })
+
+  // 绘制边界线
+  ctx.strokeStyle = 'rgba(255, 0, 0, 0.3)'
+  ctx.lineWidth = 0.5
+  ctx.beginPath()
+  ctx.moveTo(x + width, y)
+  ctx.lineTo(x + width, y + allLines.length * lineHeight)
+  ctx.stroke()
+
+  return allDebugInfo.join('\\n')
 }
 
-ctx.font = '12px sans'
-ctx.lineHeight = 14
-// textBaseline改为top是为了使y的表现与HTML一致，默认情况下，fillText的y指的是文本基线的位置
-ctx.textBaseline = 'top'
-fillTextWrap(ctx, { text, x: 0, y: 0, width: 300 })
-```
+function render() {
+  const text = textArea.value
+  const maxWidth = parseInt(widthSlider.value)
+  const fontSize = parseInt(fontSlider.value)
 
-  
+  widthValue.textContent = maxWidth
+  fontValue.textContent = fontSize
 
-效果预览，左：div，右：canvas 实现，完整的示例代码可以<CodeViewer
+  // 清空画布
+  ctx.clearRect(0, 0, 300, 200)
+
+  // 设置字体
+  ctx.font = \`\${fontSize}px sans-serif\`
+  ctx.textBaseline = 'top'
+  ctx.fillStyle = 'black'
+
+  // 渲染文本并获取调试信息
+  const debugInfo = fillTextWrap(ctx, {
+    text: text,
+    x: 5,
+    y: 5,
+    width: maxWidth,
+    lineHeight: fontSize * 1.2
+  })
+
+  debugOutput.textContent = debugInfo
+}
+
+// 事件监听
+textArea.addEventListener('input', render)
+widthSlider.addEventListener('input', render)
+fontSlider.addEventListener('input', render)
+
+// 初始渲染
+render()
+`}
+/>
+
+效果预览，左：div，右：canvas 实现，完整的示例代码：
+
+<CodeViewer
   title="贪心算法实现自动换行"
   height="350px"
   html={`<div class="wrap">

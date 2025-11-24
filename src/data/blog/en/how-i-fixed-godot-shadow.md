@@ -1,7 +1,7 @@
 ---
 title: How I Fixed Godot Shadows With Zero Knowledge
 lang: en
-translationOf: how-i-fix-godot-shadow
+translationOf: how-i-fixed-godot-shadow
 tags: []
 pubDatetime: 2025-04-13T00:00:00.000Z
 description: How I Fixed Godot Shadows With Zero Knowledge

@@ -5,6 +5,9 @@ tags: []
 pubDatetime: 2019-08-13T00:00:00.000Z
 description: 前端入门课
 ---
+
+import CodeViewer from '@/components/CodeViewer.astro';
+
 ## **HTML**
 
 ### 标签、内容、元素
@@ -23,14 +26,12 @@ description: 前端入门课
 <p>果果真可爱！</p>
 ```
 
-import CodeViewer from '~/components/CodeViewer.astro';
-
 <CodeViewer
-  title="HTML"
-  html={`<h1>果果</h1>
-<p>果果真可爱！</p>`}
-  css={``}
-  js={``}
+  title="第一个HTML元素"
+  html={`<p>果果真可爱！</p>`}
+  defaultTab="html"
+  defaultShowCode={true}
+  height="120px"
 />
 
 
@@ -47,16 +48,12 @@ import CodeViewer from '~/components/CodeViewer.astro';
 <p>果果真可爱！</p>
 ```
 
-
-
-import CodeViewer from '~/components/CodeViewer.astro';
-
 <CodeViewer
-  title="HTML"
+  title="认识h1标签"
   html={`<h1>果果</h1>
 <p>果果真可爱！</p>`}
-  css={``}
-  js={``}
+  defaultTab="html"
+  height="150px"
 />
 
 
@@ -79,22 +76,21 @@ import CodeViewer from '~/components/CodeViewer.astro';
 <h6>不能再小了</h6>
 ```
 
-<iframe
-  height={300}
-  style={{ width: "100%" }}
-  scrolling="no"
-  title="Untitled"
-  src="https://codepen.io/cosformula/embed/oKaWaQ?default-tab=html%2Cresult"
-  frameBorder="no"
-  loading="lazy"
-  allowTransparency="true"
-  allowFullScreen="true"
->
-  See the Pen &lt;a href="https://codepen.io/cosformula/pen/oKaWaQ"&gt;
-  Untitled&lt;/a&gt; by formula (&lt;a
-  href="https://codepen.io/cosformula"&gt;@cosformula&lt;/a&gt;) on &lt;a
-  href="https://codepen.io"&gt;CodePen&lt;/a&gt;.
-</iframe>
+<CodeViewer
+  title="不同层级的标题"
+  html={`<h1>猫猫</h1>
+<h2>果果</h2>
+<p>果果真可爱！</p>
+<h2>科科</h2>
+<p>科科也好可爱！</p>
+
+<h3>不妨再多试试</h3>
+<h4>其实还有更小的</h4>
+<h5>还能更小</h5>
+<h6>不能再小了</h6>`}
+  defaultTab="html"
+  height="300px"
+/>
 
   
 
@@ -105,25 +101,21 @@ import CodeViewer from '~/components/CodeViewer.astro';
 ```HTML
 <h1>果果</h1>
 <p>果果真可爱！</p>
-<img src="https://wx4.sinaimg.cn/mw690/8ad532bfgy1g5tkb2ocs9j20u90u076b.jpg"></img>
+<img src="https://placekitten.com/400/300"></img>
 ```
 
-<iframe
-  height={300}
-  style={{ width: "100%" }}
-  scrolling="no"
-  title="Untitled"
-  src="https://codepen.io/cosformula/embed/qeJmKy?default-tab=html%2Cresult"
-  frameBorder="no"
-  loading="lazy"
-  allowTransparency="true"
-  allowFullScreen="true"
->
-  See the Pen &lt;a href="https://codepen.io/cosformula/pen/qeJmKy"&gt;
-  Untitled&lt;/a&gt; by formula (&lt;a
-  href="https://codepen.io/cosformula"&gt;@cosformula&lt;/a&gt;) on &lt;a
-  href="https://codepen.io"&gt;CodePen&lt;/a&gt;.
-</iframe>
+<CodeViewer
+  title="img标签和src属性"
+  html={`<h1>果果</h1>
+<p>果果真可爱！</p>
+<img src="https://placekitten.com/400/300" width="200"></img>`}
+  css={`img {
+  max-width: 100%;
+  height: auto;
+}`}
+  defaultTab="html"
+  height="350px"
+/>
 
 
   
@@ -140,25 +132,17 @@ import CodeViewer from '~/components/CodeViewer.astro';
 
 ```HTML
 <h1>果果</h1>
-<p><a href="https://wx4.sinaimg.cn/mw690/8ad532bfgy1g5tkb2ocs9j20u90u076b.jpg" target="_blank">果果</a>真可爱！</p>
+<p><a href="https://placekitten.com/800/600" target="_blank">果果</a>真可爱！</p>
 ```
 
-<iframe
-  height={300}
-  style={{ width: "100%" }}
-  scrolling="no"
-  title="Untitled"
-  src="https://codepen.io/cosformula/embed/wVYdNM?default-tab=html%2Cresult"
-  frameBorder="no"
-  loading="lazy"
-  allowTransparency="true"
-  allowFullScreen="true"
->
-  See the Pen &lt;a href="https://codepen.io/cosformula/pen/wVYdNM"&gt;
-  Untitled&lt;/a&gt; by formula (&lt;a
-  href="https://codepen.io/cosformula"&gt;@cosformula&lt;/a&gt;) on &lt;a
-  href="https://codepen.io"&gt;CodePen&lt;/a&gt;.
-</iframe>
+<CodeViewer
+  title="超链接 - a标签"
+  html={`<h1>果果</h1>
+<p><a href="https://placekitten.com/800/600" target="_blank">果果</a>真可爱！</p>
+<p>点击"果果"会打开图片链接</p>`}
+  defaultTab="html"
+  height="150px"
+/>
 
 
 > [!important] a元素工作方式不同于其他你已经认识的元素，一开始的时候它在屏幕中显示为蓝色带下划线的字体，当你的鼠标移动到之上时鼠标会变成👋形，这时点击则会让浏览器跳转到href属性中所填写的地址，点击后文字会变成紫色下划线的字体。
@@ -283,9 +267,16 @@ p {
 <p>果果真可爱</p>
 ```
 
-  
-
-[https://codepen.io/cosformula/pen/ZgqryL](https://codepen.io/cosformula/pen/ZgqryL)
+<CodeViewer
+  title="第一个CSS规则"
+  html={`<p>果果真可爱</p>`}
+  css={`p {
+  color: red;
+}`}
+  defaultTab="css"
+  defaultShowCode={true}
+  height="120px"
+/>
 
   
 
@@ -316,22 +307,24 @@ p {
 <h6 id="guoguo">果果真可爱</h6>
 ```
 
-<iframe
-  height={300}
-  style={{ width: "100%" }}
-  scrolling="no"
-  title="Untitled"
-  src="https://codepen.io/cosformula/embed/ZgqryL?default-tab=html%2Cresult"
-  frameBorder="no"
-  loading="lazy"
-  allowTransparency="true"
-  allowFullScreen="true"
->
-  See the Pen &lt;a href="https://codepen.io/cosformula/pen/ZgqryL"&gt;
-  Untitled&lt;/a&gt; by formula (&lt;a
-  href="https://codepen.io/cosformula"&gt;@cosformula&lt;/a&gt;) on &lt;a
-  href="https://codepen.io"&gt;CodePen&lt;/a&gt;.
-</iframe>
+<CodeViewer
+  title="CSS选择器：标签、类、ID"
+  html={`<p>果果真可爱</p>
+<h6 class="red">果果真可爱</h6>
+<h6 id="guoguo">果果真可爱</h6>`}
+  css={`p {
+  color: red;
+}
+.red {
+  color: red;
+}
+#guoguo {
+  color: red;
+}`}
+  defaultTab="css"
+  defaultShowCode={true}
+  height="200px"
+/>
 
 
 ```HTML
@@ -350,22 +343,23 @@ p {
 <h5 class="bg-blue">果果真可爱</h5>
 ```
 
-<iframe
-  height={300}
-  style={{ width: "100%" }}
-  scrolling="no"
-  title="Untitled"
-  src="https://codepen.io/cosformula/embed/voVdzP?default-tab=html%2Cresult"
-  frameBorder="no"
-  loading="lazy"
-  allowTransparency="true"
-  allowFullScreen="true"
->
-  See the Pen &lt;a href="https://codepen.io/cosformula/pen/voVdzP"&gt;
-  Untitled&lt;/a&gt; by formula (&lt;a
-  href="https://codepen.io/cosformula"&gt;@cosformula&lt;/a&gt;) on &lt;a
-  href="https://codepen.io"&gt;CodePen&lt;/a&gt;.
-</iframe>
+<CodeViewer
+  title="多个CSS规则应用"
+  html={`<p class="bg-blue" id="guoguo">果果真可爱</p>
+<h5 class="bg-blue">果果真可爱</h5>`}
+  css={`p {
+  color: red;
+}
+.bg-blue {
+  background: blue;
+}
+#guoguo {
+  font-weight: bold;
+}`}
+  defaultTab="css"
+  defaultShowCode={true}
+  height="150px"
+/>
 
 
   
@@ -383,22 +377,19 @@ p {
 <p class="bg-blue red">果果真可爱</p>
 ```
 
-<iframe
-  height={300}
-  style={{ width: "100%" }}
-  scrolling="no"
-  title="Untitled"
-  src="https://codepen.io/cosformula/embed/voVdQM?default-tab=html%2Cresult"
-  frameBorder="no"
-  loading="lazy"
-  allowTransparency="true"
-  allowFullScreen="true"
->
-  See the Pen &lt;a href="https://codepen.io/cosformula/pen/voVdQM"&gt;
-  Untitled&lt;/a&gt; by formula (&lt;a
-  href="https://codepen.io/cosformula"&gt;@cosformula&lt;/a&gt;) on &lt;a
-  href="https://codepen.io"&gt;CodePen&lt;/a&gt;.
-</iframe>
+<CodeViewer
+  title="多个class同时应用"
+  html={`<p class="bg-blue red">果果真可爱</p>`}
+  css={`.red {
+  color: red
+}
+.bg-blue {
+  background: blue;
+}`}
+  defaultTab="css"
+  defaultShowCode={true}
+  height="120px"
+/>
 
 
 #### 属性选择器、伪类选择器、组合器...
@@ -420,22 +411,19 @@ p {
 <p class="red" id="guoguo">果果真可爱</p>
 ```
 
-<iframe
-  height={300}
-  style={{ width: "100%" }}
-  scrolling="no"
-  title="Untitled"
-  src="https://codepen.io/cosformula/embed/bXmLzE?default-tab=html%2Cresult"
-  frameBorder="no"
-  loading="lazy"
-  allowTransparency="true"
-  allowFullScreen="true"
->
-  See the Pen &lt;a href="https://codepen.io/cosformula/pen/bXmLzE"&gt;
-  Untitled&lt;/a&gt; by formula (&lt;a
-  href="https://codepen.io/cosformula"&gt;@cosformula&lt;/a&gt;) on &lt;a
-  href="https://codepen.io"&gt;CodePen&lt;/a&gt;.
-</iframe>
+<CodeViewer
+  title="CSS优先级：ID vs Class"
+  html={`<p class="red" id="guoguo">果果真可爱</p>`}
+  css={`.red {
+  color: red
+}
+#guoguo {
+  color: blue;
+}`}
+  defaultTab="css"
+  defaultShowCode={true}
+  height="120px"
+/>
 
 
 ```HTML
@@ -447,22 +435,16 @@ p {
 <p class="red" id="guoguo"><span>果果</span>真可爱</p>
 ```
 
-<iframe
-  height={300}
-  style={{ width: "100%" }}
-  scrolling="no"
-  title="Untitled"
-  src="https://codepen.io/cosformula/embed/YmJeBg?default-tab=html%2Cresult"
-  frameBorder="no"
-  loading="lazy"
-  allowTransparency="true"
-  allowFullScreen="true"
->
-  See the Pen &lt;a href="https://codepen.io/cosformula/pen/YmJeBg"&gt;
-  Untitled&lt;/a&gt; by formula (&lt;a
-  href="https://codepen.io/cosformula"&gt;@cosformula&lt;/a&gt;) on &lt;a
-  href="https://codepen.io"&gt;CodePen&lt;/a&gt;.
-</iframe>
+<CodeViewer
+  title="CSS继承"
+  html={`<p class="red" id="guoguo"><span>果果</span>真可爱</p>`}
+  css={`.red {
+  color: red;
+}`}
+  defaultTab="html"
+  defaultShowCode={true}
+  height="120px"
+/>
 
 
 ```HTML
@@ -477,22 +459,19 @@ span {
 <p class="red" id="guoguo"><span>果果</span>真可爱</p>
 ```
 
-<iframe
-  height={300}
-  style={{ width: "100%" }}
-  scrolling="no"
-  title="Untitled"
-  src="https://codepen.io/cosformula/embed/NQOyJN?default-tab=html%2Cresult"
-  frameBorder="no"
-  loading="lazy"
-  allowTransparency="true"
-  allowFullScreen="true"
->
-  See the Pen &lt;a href="https://codepen.io/cosformula/pen/NQOyJN"&gt;
-  Untitled&lt;/a&gt; by formula (&lt;a
-  href="https://codepen.io/cosformula"&gt;@cosformula&lt;/a&gt;) on &lt;a
-  href="https://codepen.io"&gt;CodePen&lt;/a&gt;.
-</iframe>
+<CodeViewer
+  title="标签选择器优先级"
+  html={`<p class="red" id="guoguo"><span>果果</span>真可爱</p>`}
+  css={`.red {
+  color: red;
+}
+span {
+  color: green;
+}`}
+  defaultTab="css"
+  defaultShowCode={true}
+  height="120px"
+/>
 
 
   
@@ -527,7 +506,24 @@ div {
 <div>可恶的人类</div>
 ```
 
-[https://codepen.io/cosformula/pen/RXeQmz](https://codepen.io/cosformula/pen/RXeQmz)
+<CodeViewer
+  title="CSS盒模型演示"
+  html={`<h2>CSS盒模型</h2>
+
+<p>果果说</p>
+
+<div>可恶的人类</div>`}
+  css={`div {
+  background-color: lightgrey;
+  width: 300px;
+  border: 15px solid green;
+  padding: 50px;
+  margin: 20px;
+}`}
+  defaultTab="css"
+  defaultShowCode={true}
+  height="250px"
+/>
 
 ```JavaScript
 var css = document.createElement('style'); 
@@ -560,7 +556,7 @@ JavaScript的为网页带来了可交互性，它的出现是为了解决新的�
 总而言之，之前HTML只能是静态的，但是有了DOM，你可以使用程序语言来控制整个文档的结构，页面可以在无刷新的情况下改变内容、样式和结构。
 
 ```JavaScript
-<script> 
+<script>
 function changeColor() {
   const guoguo = document.getElementById('guoguo');
   guoguo.style.color = 'red';
@@ -577,19 +573,25 @@ function appendElement() {
 <button onclick="appendElement()">append</button>
 ```
 
-<iframe
-  height={300}
-  style={{ width: "100%" }}
-  scrolling="no"
-  title="Untitled"
-  src="https://codepen.io/cosformula/embed/NQOYGb?default-tab=html%2Cresult"
-  frameBorder="no"
-  loading="lazy"
-  allowTransparency="true"
-  allowFullScreen="true"
->
-  See the Pen &lt;a href="https://codepen.io/cosformula/pen/NQOYGb"&gt;
-  Untitled&lt;/a&gt; by formula (&lt;a
-  href="https://codepen.io/cosformula"&gt;@cosformula&lt;/a&gt;) on &lt;a
-  href="https://codepen.io"&gt;CodePen&lt;/a&gt;.
-</iframe>
+<CodeViewer
+  title="JavaScript DOM操作"
+  html={`<p id="guoguo">果果真可爱</p>
+<button onclick="changeColor()">改变颜色</button>
+<button onclick="appendElement()">添加元素</button>
+<div id="container"></div>`}
+  js={`function changeColor() {
+  const guoguo = document.getElementById('guoguo');
+  guoguo.style.color = guoguo.style.color === 'red' ? 'black' : 'red';
+}
+
+function appendElement() {
+  const container = document.getElementById('container');
+  const keke = document.createElement('p');
+  const text = document.createTextNode('科科真可爱');
+  keke.appendChild(text);
+  container.appendChild(keke);
+}`}
+  defaultTab="js"
+  defaultShowCode={true}
+  height="250px"
+/>

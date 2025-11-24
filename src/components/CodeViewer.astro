@@ -1,0 +1,363 @@
+---
+export interface Props {
+  title?: string;
+  height?: string;
+  html?: string;
+  css?: string;
+  js?: string;
+  showCode?: boolean;
+  defaultShowCode?: boolean;
+  defaultTab?: 'html' | 'css' | 'js';
+}
+
+const {
+  title = 'Code Example',
+  height = '400px',
+  html = '',
+  css = '',
+  js = '',
+  showCode = true,
+  defaultShowCode = false,
+  defaultTab = 'html'
+} = Astro.props;
+
+// 创建一个完整的HTML页面内容
+const iframeContent = `<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+      body {
+        margin: 0;
+        padding: 16px;
+        font-family: sans-serif;
+      }
+      ${css}
+    </style>
+  </head>
+  <body>
+    ${html}
+    ${js ? `<script>${js}</script>` : ''}
+  </body>
+</html>`;
+
+// 使用 base64 编码来创建 data URL
+const dataUrl = `data:text/html;charset=utf-8,${encodeURIComponent(iframeContent)}`;
+
+// 生成唯一ID
+const id = Math.random().toString(36).substring(7);
+---
+
+<div class="code-viewer" data-viewer-id={id}>
+  <div class="code-viewer-header">
+    <h4>{title}</h4>
+    {showCode && (
+      <div class="code-viewer-controls">
+        <button class="toggle-code-btn" aria-label="Toggle code">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M5.854 4.854a.5.5 0 1 0-.708-.708l-3.5 3.5a.5.5 0 0 0 0 .708l3.5 3.5a.5.5 0 0 0 .708-.708L2.707 8l3.147-3.146z"/>
+            <path d="M10.146 4.854a.5.5 0 0 1 .708-.708l3.5 3.5a.5.5 0 0 1 0 .708l-3.5 3.5a.5.5 0 0 1-.708-.708L13.293 8l-3.147-3.146z"/>
+            <path d="M8.5 2a.5.5 0 0 1 .5.5v11a.5.5 0 0 1-1 0v-11a.5.5 0 0 1 .5-.5z"/>
+          </svg>
+        </button>
+      </div>
+    )}
+  </div>
+
+  {showCode && (
+    <div class="code-section" style={defaultShowCode ? "display: block;" : "display: none;"}>
+      <div class="code-tabs">
+        {html && <button class={`code-tab ${defaultTab === 'html' ? 'active' : ''}`} data-tab="html">HTML</button>}
+        {css && <button class={`code-tab ${defaultTab === 'css' ? 'active' : ''}`} data-tab="css">CSS</button>}
+        {js && <button class={`code-tab ${defaultTab === 'js' ? 'active' : ''}`} data-tab="js">JS</button>}
+      </div>
+      <div class="code-panels">
+        {html && (
+          <div class={`code-panel ${defaultTab === 'html' ? 'active' : ''}`} data-panel="html">
+            <pre><code class="language-html">{html}</code></pre>
+          </div>
+        )}
+        {css && (
+          <div class={`code-panel ${defaultTab === 'css' ? 'active' : ''}`} data-panel="css">
+            <pre><code class="language-css">{css}</code></pre>
+          </div>
+        )}
+        {js && (
+          <div class={`code-panel ${defaultTab === 'js' ? 'active' : ''}`} data-panel="js">
+            <pre><code class="language-javascript">{js}</code></pre>
+          </div>
+        )}
+      </div>
+    </div>
+  )}
+
+  <div class="code-viewer-preview">
+    <iframe
+      src={dataUrl}
+      style={`height: ${height}; width: 100%; border: none;`}
+      title={title}
+      sandbox="allow-scripts"
+    />
+  </div>
+</div>
+
+<script define:vars={{ id, defaultShowCode }}>
+  // 等待 DOM 加载完成
+  document.addEventListener('DOMContentLoaded', () => {
+    const viewer = document.querySelector(`[data-viewer-id="${id}"]`);
+    if (!viewer) return;
+
+    const toggleBtn = viewer.querySelector('.toggle-code-btn');
+    const codeSection = viewer.querySelector('.code-section');
+    const codeTabs = viewer.querySelectorAll('.code-tab');
+    const codePanels = viewer.querySelectorAll('.code-panel');
+
+    // 设置初始状态
+    if (toggleBtn && defaultShowCode) {
+      toggleBtn.classList.add('active');
+    }
+
+    // 切换代码显示
+    if (toggleBtn && codeSection) {
+      toggleBtn.addEventListener('click', () => {
+        const isVisible = codeSection.style.display !== 'none';
+        codeSection.style.display = isVisible ? 'none' : 'block';
+        toggleBtn.classList.toggle('active', !isVisible);
+      });
+    }
+
+    // 标签页切换
+    codeTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const tabName = tab.dataset.tab;
+
+        // 更新标签状态
+        codeTabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        // 更新面板显示
+        codePanels.forEach(panel => {
+          if (panel.dataset.panel === tabName) {
+            panel.classList.add('active');
+          } else {
+            panel.classList.remove('active');
+          }
+        });
+      });
+    });
+  });
+</script>
+
+<style>
+  .code-viewer {
+    margin: 2rem 0;
+    border: 1px solid var(--color-border, #e5e7eb);
+    border-radius: 8px;
+    overflow: hidden;
+    background: white;
+  }
+
+  .code-viewer-header {
+    padding: 0.75rem 1rem;
+    background: var(--color-fill, #f9fafb);
+    border-bottom: 1px solid var(--color-border, #e5e7eb);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .code-viewer-header h4 {
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-text-muted, #6b7280);
+  }
+
+  .code-viewer-controls {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .toggle-code-btn {
+    padding: 0.25rem 0.5rem;
+    background: transparent;
+    border: 1px solid var(--color-border, #e5e7eb);
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    color: var(--color-text-muted, #6b7280);
+    transition: all 0.2s;
+  }
+
+  .toggle-code-btn:hover {
+    background: var(--color-fill, #f3f4f6);
+  }
+
+  .toggle-code-btn.active {
+    background: var(--color-accent, #3b82f6);
+    color: white;
+    border-color: var(--color-accent, #3b82f6);
+  }
+
+  .code-section {
+    border-bottom: 1px solid var(--color-border, #e5e7eb);
+  }
+
+  .code-tabs {
+    display: flex;
+    gap: 0;
+    padding: 0 1rem;
+    background: var(--color-fill, #f9fafb);
+    border-bottom: 1px solid var(--color-border, #e5e7eb);
+  }
+
+  .code-tab {
+    padding: 0.5rem 1rem;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    font-size: 0.875rem;
+    color: var(--color-text-muted, #6b7280);
+    transition: all 0.2s;
+  }
+
+  .code-tab:hover {
+    color: var(--color-text, #111827);
+  }
+
+  .code-tab.active {
+    color: var(--color-accent, #3b82f6);
+    border-bottom-color: var(--color-accent, #3b82f6);
+  }
+
+  .code-panels {
+    max-height: 300px;
+    overflow-y: auto;
+    background: var(--color-code-bg, #f9fafb);
+  }
+
+  .code-panel {
+    display: none;
+    padding: 1rem;
+  }
+
+  .code-panel.active {
+    display: block;
+  }
+
+  .code-panel pre {
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    overflow-x: auto;
+  }
+
+  .code-panel code {
+    font-family: 'Courier New', monospace;
+    color: var(--color-text, #111827);
+    background: transparent;
+    padding: 0;
+  }
+
+  .code-viewer-preview {
+    background: white;
+  }
+
+  .code-viewer iframe {
+    display: block;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .code-viewer {
+      background: #1f2937;
+      border-color: #374151;
+    }
+
+    .code-viewer-header {
+      background: #111827;
+      border-color: #374151;
+    }
+
+    .code-viewer-header h4 {
+      color: #9ca3af;
+    }
+
+    .toggle-code-btn {
+      color: #9ca3af;
+      border-color: #374151;
+    }
+
+    .toggle-code-btn:hover {
+      background: #1f2937;
+    }
+
+    .toggle-code-btn.active {
+      background: #3b82f6;
+      color: white;
+      border-color: #3b82f6;
+    }
+
+    .code-tabs {
+      background: #111827;
+      border-color: #374151;
+    }
+
+    .code-tab {
+      color: #9ca3af;
+    }
+
+    .code-tab:hover {
+      color: #e5e7eb;
+    }
+
+    .code-tab.active {
+      color: #60a5fa;
+      border-bottom-color: #60a5fa;
+    }
+
+    .code-panels {
+      background: #1f2937;
+    }
+
+    .code-panel code {
+      color: #e5e7eb;
+    }
+
+    .code-viewer-preview {
+      background: #1f2937;
+    }
+  }
+
+  /* Syntax highlighting */
+  .language-html {
+    color: #e34c26;
+  }
+
+  .language-css {
+    color: #2965f1;
+  }
+
+  .language-javascript {
+    color: #f0db4f;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .language-html {
+      color: #e8732c;
+    }
+
+    .language-css {
+      color: #3b82f6;
+    }
+
+    .language-javascript {
+      color: #f7df1e;
+    }
+  }
+</style>

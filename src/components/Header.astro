@@ -2,7 +2,6 @@
 import Hr from "./Hr.astro";
 import IconX from "@/assets/icons/IconX.svg";
 import IconMoon from "@/assets/icons/IconMoon.svg";
-import IconSearch from "@/assets/icons/IconSearch.svg";
 import IconArchive from "@/assets/icons/IconArchive.svg";
 import IconLanguage from "@/assets/icons/IconLanguage.svg";
 import IconSunHigh from "@/assets/icons/IconSunHigh.svg";
@@ -40,7 +39,7 @@ const targetUrl = translationUrl || (isEnglish ? "/zh/posts" : "/posts");
 const homeUrl = isEnglish ? "/" : "/zh/";
 ---
 
-<header>
+<header class="fixed top-0 left-0 right-0 z-40 bg-background border-b border-skin-line">
   <a
     id="skip-to-content"
     href="#main-content"
@@ -54,7 +53,7 @@ const homeUrl = isEnglish ? "/" : "/zh/";
   >
     <div
       id="top-nav-wrap"
-      class="relative flex w-full items-baseline justify-between bg-background p-4 sm:items-center sm:py-6"
+      class="relative flex w-full items-baseline justify-between p-4 sm:items-center sm:py-6"
     >
       <a
         href={homeUrl}
@@ -90,11 +89,6 @@ const homeUrl = isEnglish ? "/" : "/zh/";
               {t('nav.posts')}
             </a>
           </li>
-          <li class="col-span-2">
-            <a href={isEnglish ? "/about" : "/zh/about"} class:list={{ "active-nav": isActive("/about") }}>
-              {t('nav.about')}
-            </a>
-          </li>
           {
             SITE.showArchives && (
               <li class="col-span-2">
@@ -128,20 +122,6 @@ const homeUrl = isEnglish ? "/" : "/zh/";
               </span>
             </LinkButton>
           </li>
-          <li class="col-span-1 flex items-center justify-center">
-            <LinkButton
-              href="/search"
-              class:list={[
-                "focus-outline flex p-3 sm:p-1",
-                { "[&>svg]:stroke-accent": isActive("/search") },
-              ]}
-              ariaLabel="search"
-              title="Search"
-            >
-              <IconSearch />
-              <span class="sr-only">Search</span>
-            </LinkButton>
-          </li>
           {
             SITE.lightAndDarkMode && (
               <li class="col-span-1 flex items-center justify-center">
@@ -162,7 +142,6 @@ const homeUrl = isEnglish ? "/" : "/zh/";
       </nav>
     </div>
   </div>
-  <Hr />
 </header>
 
 <script>
