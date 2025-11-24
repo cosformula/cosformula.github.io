@@ -22,7 +22,7 @@ import CodeViewer from '@/components/CodeViewer.astro';
 
 #### 什么是元素？
 
-```HTML
+```html
 <p>果果真可爱！</p>
 ```
 
@@ -43,7 +43,7 @@ import CodeViewer from '@/components/CodeViewer.astro';
 
 #### 不妨认识一个新元素
 
-```HTML
+```html
 <h1>果果</h1>
 <p>果果真可爱！</p>
 ```
@@ -63,7 +63,7 @@ import CodeViewer from '@/components/CodeViewer.astro';
 
 #### 不妨认识多一点
 
-```HTML
+```html
 <h1>猫猫</h1>
 <h2>果果</h2>
 <p>果果真可爱！</p>
@@ -98,7 +98,7 @@ import CodeViewer from '@/components/CodeViewer.astro';
 
 我们通过引入一个新标签来认识元素属性。
 
-```HTML
+```html
 <h1>果果</h1>
 <p>果果真可爱！</p>
 <img src="https://placekitten.com/400/300"></img>
@@ -130,7 +130,7 @@ import CodeViewer from '@/components/CodeViewer.astro';
 
 #### 来认识超链接
 
-```HTML
+```html
 <h1>果果</h1>
 <p><a href="https://placekitten.com/800/600" target="_blank">果果</a>真可爱！</p>
 ```
@@ -194,7 +194,7 @@ HTML的全称是**H**yper **T**ext **M**arkup **L**anguage，意思是超文本�
 
 #### 一个标准的HTML5网页
 
-```HTML
+```html
 <!DOCTYPE html>
 <html lang="en">
 		<!--这是注释-->
@@ -215,7 +215,7 @@ HTML的全称是**H**yper **T**ext **M**arkup **L**anguage，意思是超文本�
 
 #### DOM树
 
-```HTML
+```html
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -244,7 +244,7 @@ HTML的全称是**H**yper **T**ext **M**arkup **L**anguage，意思是超文本�
 
 不过随着计算机的飞速发展，HTML简单的样式已经不符合人们的需求，当时的浏览器出现了许多非标准标签来实现一些酷炫的视觉效果，比如`<blink>`会让里面的内容闪烁...
 
-```HTML
+```html
 <blink>Why would somebody use this?</blink>
 ```
 
@@ -258,7 +258,7 @@ HTML的全称是**H**yper **T**ext **M**arkup **L**anguage，意思是超文本�
 
 ### 回到果果的例子
 
-```HTML
+```html
 <style>
 p {
   color: red;
@@ -290,7 +290,7 @@ p {
 
 #### 简单选择器：标签选择器、类选择器、ID选择器
 
-```HTML
+```html
 <style>
 p {
   color: red;
@@ -327,7 +327,7 @@ p {
 />
 
 
-```HTML
+```html
 <style>
 p {
   color: red;
@@ -364,7 +364,7 @@ p {
 
   
 
-```HTML
+```html
 <style>
 .red {
   color: red
@@ -398,7 +398,7 @@ p {
 
 #### 优先级与继承
 
-```HTML
+```html
 <style>
 .red {
   color: red
@@ -426,7 +426,7 @@ p {
 />
 
 
-```HTML
+```html
 <style>
 .red {
   color: red;
@@ -447,7 +447,7 @@ p {
 />
 
 
-```HTML
+```html
 <style>
 .red {
   color: red;
@@ -488,7 +488,7 @@ span {
 
 ![/images/Untitled 7 7.png](/static/images/frontend-entry-level-course/Untitled%207%207.png)
 
-```HTML
+```html
 <style>
 div {
   background-color: lightgrey;
@@ -525,7 +525,7 @@ div {
   height="250px"
 />
 
-```JavaScript
+```javascript
 var css = document.createElement('style'); 
 css.type = 'text/css'; 
 css.appendChild(document.createTextNode('* {border: 1px solid red !important;}')); 
@@ -555,7 +555,7 @@ JavaScript的为网页带来了可交互性，它的出现是为了解决新的�
 
 总而言之，之前HTML只能是静态的，但是有了DOM，你可以使用程序语言来控制整个文档的结构，页面可以在无刷新的情况下改变内容、样式和结构。
 
-```JavaScript
+```javascript
 <script>
 function changeColor() {
   const guoguo = document.getElementById('guoguo');

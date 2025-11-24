@@ -1,5 +1,6 @@
 ---
 import { getLangFromUrl, useTranslations } from "@/i18n/utils";
+import { ui } from "@/i18n/ui";
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
@@ -23,7 +24,8 @@ const homePath = lang === "en" ? "/" : `/${lang}`;
     {
       breadcrumbList.map((breadcrumb, index, arr) => {
         // Translate segment if it's a known key
-        const translated = t(`breadcrumb.${breadcrumb}`) || breadcrumb;
+        const translationKey = `breadcrumb.${breadcrumb}` as keyof typeof ui[typeof lang];
+        const translated = (translationKey in ui[lang] ? t(translationKey) : null) || breadcrumb;
         return index + 1 === arr.length ? (
           <li>
             <span

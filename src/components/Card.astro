@@ -15,11 +15,16 @@ export interface Props {
   variant?: "h2" | "h3";
 }
 
-const { href, frontmatter, secHeading = true, data, id, filePath, variant = "h2" } = Astro.props;
+const { href, frontmatter, data, id, filePath, variant = "h2" } = Astro.props;
 
 // Determine content data source (frontmatter prop or data prop from CollectionEntry)
 const content = frontmatter || data;
-const { title, description, pubDatetime, modDatetime, timezone } = content;
+
+// Handle potentially undefined content
+const title = content?.title || '';
+const description = content?.description || '';
+const pubDatetime = content?.pubDatetime;
+const modDatetime = content?.modDatetime;
 
 const headerProps = {
   style: { viewTransitionName: slugifyStr(title) },
@@ -29,7 +34,7 @@ const headerProps = {
 
 <li class="my-6">
   <a
-    href={href || getPath(id, filePath)}
+    href={href || (id ? getPath(id, filePath) : '#')}
     class="inline-block text-lg font-medium text-accent decoration-dashed underline-offset-4 focus-visible:no-underline focus-visible:underline-offset-0"
   >
     {
@@ -40,6 +45,6 @@ const headerProps = {
       )
     }
   </a>
-  <Datetime {pubDatetime} {modDatetime} {timezone} />
+  {pubDatetime && <Datetime pubDatetime={pubDatetime} modDatetime={modDatetime} timezone={undefined} />}
   <p>{description}</p>
 </li>

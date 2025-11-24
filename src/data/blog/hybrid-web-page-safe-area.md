@@ -35,7 +35,7 @@ iPhone横屏模式下的安全区域
 
 未适配的网页将会出现如下的白条，在meta内设置`viewport-fit=cover`可以将网页扩展到整个屏幕，但是这时就需要网页自己处理安全区域了。
 
-```HTML
+```html
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 ```
 

@@ -26,24 +26,26 @@ export default defineConfig({
   redirects: {
     // 旧URL的重定向规则
     // 英文文章（在 src/data/blog/en/ 目录下的）
-    '/blog/how-i-fixed-godot-shadow-en': '/posts/en/how-i-fixed-godot-shadow',
-    '/blog/how-i-fixed-godot-shadow': '/posts/en/how-i-fixed-godot-shadow',
-    '/blog/how-i-fix-godot-shadow': '/posts/en/how-i-fixed-godot-shadow',
+    "/blog/how-i-fixed-godot-shadow-en": "/posts/en/how-i-fixed-godot-shadow",
+    "/blog/how-i-fixed-godot-shadow": "/posts/en/how-i-fixed-godot-shadow",
+    "/blog/how-i-fix-godot-shadow": "/posts/en/how-i-fixed-godot-shadow",
 
     // 中文文章（在 src/data/blog/ 根目录下的）
-    '/blog/web-performance': '/zh/posts/web-performance',
-    '/blog/hybrid-web-page-safe-area': '/zh/posts/hybrid-web-page-safe-area',
-    '/blog/canvas-text-wrap': '/zh/posts/canvas-text-wrap',
-    '/blog/frontend-entry-level-course': '/zh/posts/frontend-entry-level-course',
-
-    // 通用的博客路径重定向（作为fallback）
-    '/blog/[...slug]': '/zh/posts/[...slug]',
+    "/blog/web-performance": "/zh/posts/web-performance",
+    "/blog/hybrid-web-page-safe-area": "/zh/posts/hybrid-web-page-safe-area",
+    "/blog/canvas-text-wrap": "/zh/posts/canvas-text-wrap",
+    "/blog/frontend-entry-level-course":
+      "/zh/posts/frontend-entry-level-course",
 
     // RSS订阅重定向
-    '/rss': '/rss.xml',
+    "/rss": "/rss.xml",
   },
   markdown: {
-    remarkPlugins: [remarkMath, remarkToc, [remarkCollapse, { test: "Table of contents" }]],
+    remarkPlugins: [
+      remarkMath,
+      remarkToc,
+      [remarkCollapse, { test: "Table of contents" }],
+    ],
     rehypePlugins: [[rehypeKatex, { strict: false }]],
     shikiConfig: {
       // For more themes, visit https://shiki.style/themes
