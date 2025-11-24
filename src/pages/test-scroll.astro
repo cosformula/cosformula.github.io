@@ -1,0 +1,269 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import CodeViewer from '@/components/CodeViewer.astro';
+---
+
+<BaseLayout title="移动端滚动测试">
+  <div class="container">
+    <h1>移动端滚动手势冲突测试页面</h1>
+
+    <section>
+      <h2>测试说明</h2>
+      <p>这个页面用于测试交互式样例在移动端的滚动手势冲突问题。</p>
+
+      <ul>
+        <li><strong>单指滑动</strong>：滚动页面</li>
+        <li><strong>双指滑动</strong>：滚动 iframe 内部内容（如果内容超出可视区域）</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>示例 1：带有垂直滚动的内容</h2>
+      <CodeViewer
+        title="长内容滚动测试"
+        height="300px"
+        showCode={true}
+        defaultShowCode={false}
+        html={`<div class="scroll-container">
+  <h3>可滚动内容区域</h3>
+  <p>这是一个很长的内容区域，用于测试内部滚动。</p>
+  <p>在移动设备上：</p>
+  <ul>
+    <li>单指上下滑动 - 滚动整个页面</li>
+    <li>双指上下滑动 - 滚动这个内部区域</li>
+  </ul>
+  <div class="content-block">内容块 1</div>
+  <div class="content-block">内容块 2</div>
+  <div class="content-block">内容块 3</div>
+  <div class="content-block">内容块 4</div>
+  <div class="content-block">内容块 5</div>
+  <div class="content-block">内容块 6</div>
+  <div class="content-block">内容块 7</div>
+  <div class="content-block">内容块 8</div>
+  <div class="content-block">内容块 9</div>
+  <div class="content-block">内容块 10</div>
+  <p>滚动到底部查看更多内容...</p>
+</div>`}
+        css={`.scroll-container {
+  max-height: 250px;
+  overflow-y: auto;
+  padding: 20px;
+  background: #f5f5f5;
+  border-radius: 8px;
+}
+
+.content-block {
+  height: 80px;
+  margin: 10px 0;
+  padding: 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}`}
+        js={`// 监听滚动事件
+const container = document.querySelector('.scroll-container');
+let scrollInfo = document.createElement('div');
+scrollInfo.style.position = 'fixed';
+scrollInfo.style.top = '10px';
+scrollInfo.style.right = '10px';
+scrollInfo.style.padding = '10px';
+scrollInfo.style.background = 'rgba(0,0,0,0.7)';
+scrollInfo.style.color = 'white';
+scrollInfo.style.borderRadius = '4px';
+scrollInfo.style.fontSize = '12px';
+document.body.appendChild(scrollInfo);
+
+function updateScrollInfo() {
+  const scrollTop = container.scrollTop;
+  const scrollHeight = container.scrollHeight;
+  const clientHeight = container.clientHeight;
+  const scrollPercentage = Math.round((scrollTop / (scrollHeight - clientHeight)) * 100) || 0;
+
+  scrollInfo.innerHTML = \`
+    滚动位置: \${scrollTop}px<br>
+    滚动百分比: \${scrollPercentage}%
+  \`;
+}
+
+container.addEventListener('scroll', updateScrollInfo);
+updateScrollInfo();`}
+      />
+    </section>
+
+    <section>
+      <h2>示例 2：表单交互测试</h2>
+      <CodeViewer
+        title="表单输入交互"
+        height="400px"
+        showCode={true}
+        defaultShowCode={false}
+        html={`<div class="form-container">
+  <h3>表单交互测试</h3>
+  <form>
+    <div class="form-group">
+      <label for="name">姓名</label>
+      <input type="text" id="name" placeholder="输入您的姓名">
+    </div>
+
+    <div class="form-group">
+      <label for="message">长消息</label>
+      <textarea id="message" rows="10" placeholder="输入一段长文本...">这是一段预填充的长文本。
+在移动设备上，这个文本框应该可以正常滚动。
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
+nisi ut aliquip ex ea commodo consequat.
+
+Duis aute irure dolor in reprehenderit in voluptate velit esse
+cillum dolore eu fugiat nulla pariatur.
+
+Excepteur sint occaecat cupidatat non proident, sunt in culpa
+qui officia deserunt mollit anim id est laborum.
+
+继续添加更多文本以测试滚动...
+第10行
+第11行
+第12行
+第13行
+第14行
+第15行</textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="select">选择选项</label>
+      <select id="select">
+        <option>选项 1</option>
+        <option>选项 2</option>
+        <option>选项 3</option>
+        <option>选项 4</option>
+        <option>选项 5</option>
+      </select>
+    </div>
+
+    <button type="submit">提交</button>
+  </form>
+</div>`}
+        css={`.form-container {
+  padding: 20px;
+  background: white;
+  border-radius: 8px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #333;
+}
+
+input, textarea, select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+textarea {
+  resize: vertical;
+  font-family: inherit;
+}
+
+button {
+  background: #4CAF50;
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+button:hover {
+  background: #45a049;
+}`}
+        js={`// 监听表单提交
+const form = document.querySelector('form');
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+  alert('表单已提交（测试）');
+});
+
+// 监听输入变化
+const textarea = document.querySelector('#message');
+textarea.addEventListener('input', () => {
+  console.log('文本内容已更新');
+});`}
+      />
+    </section>
+
+    <section>
+      <h2>示例 3：不可滚动内容（对比）</h2>
+      <CodeViewer
+        title="静态内容"
+        height="200px"
+        showCode={false}
+        html={`<div style="padding: 20px; text-align: center;">
+  <h3>静态内容</h3>
+  <p>这个示例的内容不会超出容器高度，因此不会触发内部滚动。</p>
+  <p>在移动设备上，任何滑动手势都会滚动页面。</p>
+</div>`}
+        css={`div {
+  background: #e3f2fd;
+  border-radius: 8px;
+}`}
+      />
+    </section>
+
+    <section>
+      <h2>页面填充内容</h2>
+      <p>下面是一些填充内容，用于测试页面滚动：</p>
+      {Array.from({ length: 20 }, (_, i) => (
+        <p>这是第 {i + 1} 段填充内容，用于确保页面可以滚动。Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+      ))}
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  h1 {
+    color: var(--color-text);
+    margin-bottom: 30px;
+  }
+
+  h2 {
+    color: var(--color-text);
+    margin-top: 40px;
+    margin-bottom: 20px;
+  }
+
+  section {
+    margin-bottom: 40px;
+  }
+
+  ul {
+    margin: 20px 0;
+    padding-left: 30px;
+  }
+
+  p {
+    line-height: 1.6;
+    color: var(--color-text-muted);
+  }
+</style>

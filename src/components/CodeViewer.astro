@@ -8,6 +8,7 @@ export interface Props {
   showCode?: boolean;
   defaultShowCode?: boolean;
   defaultTab?: 'html' | 'css' | 'js';
+  enableMobileScroll?: boolean; // 新增：是否允许移动端内部滚动
 }
 
 const {
@@ -18,7 +19,8 @@ const {
   js = '',
   showCode = true,
   defaultShowCode = false,
-  defaultTab = 'html'
+  defaultTab = 'html',
+  enableMobileScroll = true
 } = Astro.props;
 
 // 创建一个完整的HTML页面内容
@@ -32,6 +34,8 @@ const iframeContent = `<!DOCTYPE html>
         margin: 0;
         padding: 16px;
         font-family: sans-serif;
+        /* 提升移动端滚动体验 */
+        -webkit-overflow-scrolling: touch;
       }
       ${css}
     </style>
@@ -92,13 +96,20 @@ const id = Math.random().toString(36).substring(7);
     </div>
   )}
 
-  <div class="code-viewer-preview">
+  <div class="code-viewer-preview" data-enable-scroll={enableMobileScroll}>
     <iframe
       src={dataUrl}
       style={`height: ${height}; width: 100%; border: none;`}
       title={title}
       sandbox="allow-scripts"
+      data-iframe-height={height}
     />
+    {/* 移动端滚动提示层 */}
+    <div class="mobile-scroll-overlay">
+      <div class="scroll-hint">
+        <span>双指滑动操作内部</span>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -112,6 +123,9 @@ const id = Math.random().toString(36).substring(7);
     const codeSection = viewer.querySelector('.code-section');
     const codeTabs = viewer.querySelectorAll('.code-tab');
     const codePanels = viewer.querySelectorAll('.code-panel');
+    const previewContainer = viewer.querySelector('.code-viewer-preview');
+    const iframe = viewer.querySelector('iframe');
+    const scrollOverlay = viewer.querySelector('.mobile-scroll-overlay');
 
     // 设置初始状态
     if (toggleBtn && defaultShowCode) {
@@ -146,6 +160,113 @@ const id = Math.random().toString(36).substring(7);
         });
       });
     });
+
+    // 移动端滚动处理
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+    if (isMobile && previewContainer && iframe) {
+      let isIframeScrollable = false;
+      let touchStartY = 0;
+      let iframeInteractionEnabled = false;
+
+      // 检测 iframe 是否可滚动
+      const checkIframeScrollable = () => {
+        try {
+          const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+          const body = iframeDoc.body;
+          const html = iframeDoc.documentElement;
+          const scrollHeight = Math.max(body.scrollHeight, html.scrollHeight);
+          const clientHeight = Math.max(body.clientHeight, html.clientHeight);
+          isIframeScrollable = scrollHeight > clientHeight;
+        } catch (e) {
+          // 跨域 iframe 无法访问内容，假设可滚动
+          isIframeScrollable = true;
+        }
+      };
+
+      // iframe 加载完成后检测
+      iframe.addEventListener('load', checkIframeScrollable);
+
+      // 代码面板滚动边界检测
+      const codePanelsContainer = viewer.querySelector('.code-panels');
+      if (codePanelsContainer) {
+        let startY = 0;
+        let scrollTop = 0;
+
+        codePanelsContainer.addEventListener('touchstart', (e) => {
+          startY = e.touches[0].pageY;
+          scrollTop = codePanelsContainer.scrollTop;
+        }, { passive: true });
+
+        codePanelsContainer.addEventListener('touchmove', (e) => {
+          const deltaY = e.touches[0].pageY - startY;
+          const isScrollingUp = deltaY > 0;
+          const isScrollingDown = deltaY < 0;
+
+          // 到达顶部边界且继续向上滑动
+          if (isScrollingUp && scrollTop <= 0) {
+            codePanelsContainer.style.overflow = 'hidden';
+            setTimeout(() => {
+              codePanelsContainer.style.overflow = 'auto';
+            }, 100);
+          }
+
+          // 到达底部边界且继续向下滑动
+          const maxScroll = codePanelsContainer.scrollHeight - codePanelsContainer.clientHeight;
+          if (isScrollingDown && scrollTop >= maxScroll) {
+            codePanelsContainer.style.overflow = 'hidden';
+            setTimeout(() => {
+              codePanelsContainer.style.overflow = 'auto';
+            }, 100);
+          }
+        }, { passive: true });
+      }
+
+      // iframe 区域的手势处理
+      let touchCount = 0;
+      let hintTimer = null;
+
+      // 监听触摸开始事件
+      previewContainer.addEventListener('touchstart', (e) => {
+        touchCount = e.touches.length;
+        touchStartY = e.touches[0].pageY;
+
+        // 如果是双指触摸，启用 iframe 内部滚动
+        if (touchCount >= 2 && isIframeScrollable) {
+          iframeInteractionEnabled = true;
+          iframe.style.pointerEvents = 'auto';
+
+          // 显示提示
+          if (scrollOverlay) {
+            scrollOverlay.classList.add('active');
+            clearTimeout(hintTimer);
+            hintTimer = setTimeout(() => {
+              scrollOverlay.classList.remove('active');
+            }, 1500);
+          }
+        }
+      }, { passive: true });
+
+      // 监听触摸结束事件
+      previewContainer.addEventListener('touchend', (e) => {
+        touchCount = e.touches.length;
+
+        // 所有手指离开时，禁用 iframe 内部滚动
+        if (touchCount === 0 && iframeInteractionEnabled) {
+          setTimeout(() => {
+            iframeInteractionEnabled = false;
+            iframe.style.pointerEvents = '';
+          }, 100);
+        }
+      }, { passive: true });
+
+      // 单指滑动时阻止 iframe 接收事件
+      previewContainer.addEventListener('touchmove', (e) => {
+        if (!iframeInteractionEnabled && touchCount === 1) {
+          iframe.style.pointerEvents = 'none';
+        }
+      }, { passive: true });
+    }
   });
 </script>
 
@@ -238,6 +359,10 @@ const id = Math.random().toString(36).substring(7);
     max-height: 300px;
     overflow-y: auto;
     background: var(--color-code-bg, #f9fafb);
+    /* 优化移动端滚动 */
+    -webkit-overflow-scrolling: touch;
+    /* 防止滚动穿透 */
+    overscroll-behavior: contain;
   }
 
   .code-panel {
@@ -267,10 +392,63 @@ const id = Math.random().toString(36).substring(7);
 
   .code-viewer-preview {
     background: white;
+    position: relative;
+    /* 防止滚动穿透 */
+    overscroll-behavior: contain;
   }
 
   .code-viewer iframe {
     display: block;
+    /* 默认单指滑动时不响应 iframe 内部事件 */
+    touch-action: pan-y;
+  }
+
+  /* 移动端滚动提示层 */
+  .mobile-scroll-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 10;
+  }
+
+  .mobile-scroll-overlay.active {
+    display: flex;
+    opacity: 1;
+  }
+
+  .scroll-hint {
+    background: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    font-size: 0.875rem;
+    color: var(--color-text, #111827);
+  }
+
+  /* 移动端特定样式 */
+  @media (max-width: 768px) {
+    .code-viewer-preview[data-enable-scroll="false"] iframe {
+      pointer-events: none;
+    }
+
+    .code-viewer-preview {
+      /* 在移动端优先响应页面滚动 */
+      touch-action: pan-y;
+    }
+
+    .code-panels {
+      /* 限制最大高度，避免占用过多屏幕 */
+      max-height: 200px;
+    }
   }
 
   @media (prefers-color-scheme: dark) {
@@ -331,6 +509,15 @@ const id = Math.random().toString(36).substring(7);
 
     .code-viewer-preview {
       background: #1f2937;
+    }
+
+    .scroll-hint {
+      background: #374151;
+      color: #e5e7eb;
+    }
+
+    .mobile-scroll-overlay {
+      background: rgba(0, 0, 0, 0.7);
     }
   }
 
