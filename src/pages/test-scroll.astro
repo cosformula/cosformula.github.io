@@ -1,9 +1,9 @@
 ---
-import BaseLayout from '@/layouts/BaseLayout.astro';
+import Layout from '@/layouts/Layout.astro';
 import CodeViewer from '@/components/CodeViewer.astro';
 ---
 
-<BaseLayout title="移动端滚动测试">
+<Layout title="移动端滚动测试">
   <div class="container">
     <h1>移动端滚动手势冲突测试页面</h1>
 
@@ -233,7 +233,7 @@ textarea.addEventListener('input', () => {
       ))}
     </section>
   </div>
-</BaseLayout>
+</Layout>
 
 <style>
   .container {
