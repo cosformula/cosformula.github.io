@@ -1,0 +1,28 @@
+{
+  "version": "0.2",
+  "language": "en",
+  "words": [
+    "overscroll",
+    "touchstart",
+    "touchend",
+    "touchmove",
+    "astro",
+    "Astro",
+    "CodeViewer",
+    "iframe",
+    "webkit",
+    "vite",
+    "tailwindcss",
+    "katex",
+    "pagefind",
+    "markdownlint"
+  ],
+  "ignorePaths": [
+    "node_modules/**",
+    "dist/**",
+    ".git/**",
+    "*.min.*",
+    "package-lock.json",
+    "yarn.lock"
+  ]
+}
