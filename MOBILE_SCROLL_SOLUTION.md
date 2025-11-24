@@ -51,12 +51,22 @@ previewContainer.addEventListener('touchstart', (e) => {
 
 ### 4. 新增属性
 
-CodeViewer 组件新增 `enableMobileScroll` 属性（默认为 true）：
+CodeViewer 组件新增了两个属性：
+
+1. `enableMobileScroll`（默认为 `true`）：控制移动端内部滚动行为
+2. `forceWhiteBackground`（默认为 `true`）：强制白色背景以兼容未适配深色模式的内容
 
 ```astro
 <CodeViewer
   title="示例"
-  enableMobileScroll={true}  // 允许移动端内部滚动
+  enableMobileScroll={true}     // 允许移动端内部滚动
+  forceWhiteBackground={true}    // 强制白色背景（默认）
+  ...
+/>
+
+// 如果内容已适配深色模式，可以设置为 false
+<CodeViewer
+  forceWhiteBackground={false}  // 跟随系统主题
   ...
 />
 ```

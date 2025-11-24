@@ -226,6 +226,41 @@ textarea.addEventListener('input', () => {
     </section>
 
     <section>
+      <h2>示例 4：深色模式兼容测试</h2>
+      <p>测试强制白色背景选项（适用于未适配深色模式的内容）</p>
+
+      <div style="margin-bottom: 2rem;">
+        <h3>默认（强制白色背景）</h3>
+        <CodeViewer
+          title="白色背景示例"
+          height="150px"
+          showCode={false}
+          forceWhiteBackground={true}
+          html={`<div style="padding: 20px;">
+  <h4 style="color: #333;">标题文字</h4>
+  <p style="color: #666;">这个示例使用了固定的深色文字颜色。</p>
+  <p style="color: #888;">即使在深色模式下，背景也会保持白色。</p>
+</div>`}
+        />
+      </div>
+
+      <div>
+        <h3>跟随系统主题</h3>
+        <CodeViewer
+          title="自适应背景示例"
+          height="150px"
+          showCode={false}
+          forceWhiteBackground={false}
+          html={`<div style="padding: 20px;">
+  <h4>标题文字</h4>
+  <p>这个示例没有指定颜色，会跟随系统主题。</p>
+  <p>在深色模式下，背景会变成深色。</p>
+</div>`}
+        />
+      </div>
+    </section>
+
+    <section>
       <h2>页面填充内容</h2>
       <p>下面是一些填充内容，用于测试页面滚动：</p>
       {Array.from({ length: 20 }, (_, i) => (

@@ -8,7 +8,8 @@ export interface Props {
   showCode?: boolean;
   defaultShowCode?: boolean;
   defaultTab?: 'html' | 'css' | 'js';
-  enableMobileScroll?: boolean; // 新增：是否允许移动端内部滚动
+  enableMobileScroll?: boolean; // 是否允许移动端内部滚动
+  forceWhiteBackground?: boolean; // 是否强制白色背景（默认 true）
 }
 
 const {
@@ -20,7 +21,8 @@ const {
   showCode = true,
   defaultShowCode = false,
   defaultTab = 'html',
-  enableMobileScroll = true
+  enableMobileScroll = true,
+  forceWhiteBackground = true
 } = Astro.props;
 
 // 创建一个完整的HTML页面内容
@@ -30,10 +32,17 @@ const iframeContent = `<!DOCTYPE html>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
+      ${forceWhiteBackground ? `
+      html {
+        background-color: white !important;
+        color-scheme: light !important;
+      }
+      ` : ''}
       body {
         margin: 0;
         padding: 16px;
         font-family: sans-serif;
+        ${forceWhiteBackground ? 'background-color: white !important; color: #111827 !important;' : ''}
         /* 提升移动端滚动体验 */
         -webkit-overflow-scrolling: touch;
       }
@@ -96,7 +105,7 @@ const id = Math.random().toString(36).substring(7);
     </div>
   )}
 
-  <div class="code-viewer-preview" data-enable-scroll={enableMobileScroll}>
+  <div class="code-viewer-preview" data-enable-scroll={enableMobileScroll} data-force-white={forceWhiteBackground}>
     <iframe
       src={dataUrl}
       style={`height: ${height}; width: 100%; border: none;`}
@@ -397,6 +406,11 @@ const id = Math.random().toString(36).substring(7);
     overscroll-behavior: contain;
   }
 
+  /* 强制白色背景（即使在深色模式下） */
+  .code-viewer-preview[data-force-white="true"] {
+    background: white !important;
+  }
+
   .code-viewer iframe {
     display: block;
     /* 默认单指滑动时不响应 iframe 内部事件 */
@@ -507,7 +521,7 @@ const id = Math.random().toString(36).substring(7);
       color: #e5e7eb;
     }
 
-    .code-viewer-preview {
+    .code-viewer-preview:not([data-force-white="true"]) {
       background: #1f2937;
     }
 
