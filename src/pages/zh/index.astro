@@ -1,0 +1,116 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import Socials from "@/components/Socials.astro";
+import LinkButton from "@/components/LinkButton.astro";
+import Card from "@/components/Card.astro";
+import Hr from "@/components/Hr.astro";
+import getSortedPosts from "@/utils/getSortedPosts";
+import IconRss from "@/assets/icons/IconRss.svg";
+import IconArrowRight from "@/assets/icons/IconArrowRight.svg";
+import { SITE } from "@/config";
+import { SOCIALS } from "@/constants";
+
+const posts = await getCollection("blog", ({ data }) => !data.draft && data.lang === "zh");
+
+const sortedPosts = getSortedPosts(posts);
+const featuredPosts = sortedPosts.filter(({ data }) => data.featured);
+const recentPosts = sortedPosts.filter(({ data }) => !data.featured);
+---
+
+<Layout>
+  <Header translationUrl="/" />
+  <main id="main-content" data-layout="index">
+    <section id="hero" class="pt-8 pb-6">
+      <h1 class="my-4 inline-block text-4xl font-bold sm:my-8 sm:text-5xl">
+        一点旁注
+      </h1>
+      <a
+        target="_blank"
+        href="/rss.xml"
+        class="inline-block"
+        aria-label="rss feed"
+        title="RSS Feed"
+      >
+        <IconRss
+          width={20}
+          height={20}
+          class="scale-125 stroke-accent stroke-3 rtl:-rotate-90"
+        />
+        <span class="sr-only">RSS Feed</span>
+      </a>
+
+      <p>
+        产品工程师、游戏开发者。做项目、写代码，也会翻点书，偶尔把想明白的一小块画成图、写成字。
+      </p>
+      <p class="mt-2">
+        这里是这些事情之间偶尔连成线时，留下的一点旁注。
+      </p>
+      {
+        // only display if at least one social link is enabled
+        SOCIALS.length > 0 && (
+          <div class="mt-4 flex flex-col sm:flex-row sm:items-center">
+            <div class="me-2 mb-1 whitespace-nowrap sm:mb-0">社交链接:</div>
+            <Socials />
+          </div>
+        )
+      }
+    </section>
+
+    <Hr />
+
+    {
+      featuredPosts.length > 0 && (
+        <>
+          <section id="featured" class="pt-12 pb-6">
+            <h2 class="text-2xl font-semibold tracking-wide">精选文章</h2>
+            <ul>
+              {featuredPosts.map(post => {
+                const slug = post.id.split("/").pop()?.replace(/\.mdx?$/, "");
+                return <Card variant="h3" href={`/zh/posts/${slug}/`} {...post} />;
+              })}
+            </ul>
+          </section>
+          {recentPosts.length > 0 && <Hr />}
+        </>
+      )
+    }
+
+    {
+      recentPosts.length > 0 && (
+        <section id="recent-posts" class="pt-12 pb-6">
+          <h2 class="text-2xl font-semibold tracking-wide">最新文章</h2>
+          <ul>
+            {recentPosts.map(
+              (post, index) => {
+                if (index >= SITE.postPerIndex) return null;
+                const slug = post.id.split("/").pop()?.replace(/\.mdx?$/, "");
+                return <Card variant="h3" href={`/zh/posts/${slug}/`} {...post} />;
+              }
+            )}
+          </ul>
+        </section>
+      )
+    }
+
+    <div class="my-8 text-center">
+      <LinkButton href="/zh/posts/">
+        所有文章
+        <IconArrowRight class="inline-block rtl:-rotate-180" />
+      </LinkButton>
+    </div>
+  </main>
+  <Footer />
+</Layout>
+
+<script>
+  document.addEventListener("astro:page-load", () => {
+    const indexLayout = (document.querySelector("#main-content") as HTMLElement)
+      ?.dataset?.layout;
+    if (indexLayout) {
+      sessionStorage.setItem("backUrl", "/zh/");
+    }
+  });
+</script>

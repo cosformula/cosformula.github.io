@@ -1,0 +1,207 @@
+---
+import { render, type CollectionEntry, getCollection } from "astro:content";
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import Tag from "@/components/Tag.astro";
+import Datetime from "@/components/Datetime.astro";
+import EditPost from "@/components/EditPost.astro";
+import BackButton from "@/components/BackButton.astro";
+import BackToTopButton from "@/components/BackToTopButton.astro";
+import { getPath } from "@/utils/getPath";
+import { slugifyStr } from "@/utils/slugify";
+import IconChevronLeft from "@/assets/icons/IconChevronLeft.svg";
+import IconChevronRight from "@/assets/icons/IconChevronRight.svg";
+import { SITE } from "@/config";
+import { useTranslations } from "@/i18n/utils";
+
+export interface Props {
+  post: CollectionEntry<"blog">;
+  posts: CollectionEntry<"blog">[];
+}
+
+const { post, posts } = Astro.props;
+
+const {
+  title,
+  author,
+  description,
+  ogImage: initOgImage,
+  canonicalURL,
+  pubDatetime,
+  modDatetime,
+  timezone,
+  tags,
+  hideEditPost,
+  lang,
+  translationOf,
+} = post.data;
+
+const { Content } = await render(post);
+
+const t = useTranslations(lang);
+
+// Find translation
+let translationLink: { href: string; lang: string; label: string } | null = null;
+if (translationOf) {
+    const allBlogPosts = await getCollection("blog");
+    const translation = allBlogPosts.find(
+        p => p.data.translationOf === translationOf && p.data.lang !== lang
+    );
+    if (translation) {
+        translationLink = {
+            href: getPath(translation.id, translation.filePath),
+            lang: translation.data.lang,
+            label: translation.data.lang === 'zh' ? '阅读中文版' : 'Read in English',
+        };
+    }
+}
+
+let ogImageUrl: string | undefined;
+
+// Determine OG image source
+if (typeof initOgImage === "string") {
+  ogImageUrl = initOgImage; // Remote OG image (absolute URL)
+} else if (initOgImage?.src) {
+  ogImageUrl = initOgImage.src; // Local asset
+}
+
+// Use dynamic OG image if enabled and no remote|local ogImage
+if (!ogImageUrl && SITE.dynamicOgImage) {
+  ogImageUrl = `${getPath(post.id, post.filePath)}/index.png`;
+}
+
+// Resolve OG image URL (or fallback to SITE.ogImage / default `og.png`)
+const ogImage = ogImageUrl
+  ? new URL(ogImageUrl, Astro.url.origin).href
+  : undefined;
+
+const layoutProps = {
+  title: `${title} | ${SITE.title}`,
+  author,
+  description,
+  pubDatetime,
+  modDatetime,
+  canonicalURL,
+  ogImage,
+  scrollSmooth: true,
+};
+
+/* ========== Prev/Next Posts ========== */
+
+const allPosts = posts.map(({ data: { title, lang }, id }) => ({
+  id,
+  title,
+  lang,
+}));
+
+const currentPostIndex = allPosts.findIndex(a => a.id === post.id);
+
+const prevPost = currentPostIndex !== 0 ? allPosts[currentPostIndex - 1] : null;
+const nextPost =
+  currentPostIndex !== allPosts.length ? allPosts[currentPostIndex + 1] : null;
+
+const getPostUrl = (post: { id: string; lang: string }) => {
+    const slug = post.id.split("/").pop()?.replace(/\.[^/.]+$/, "");
+    const basePath = post.lang === "zh" ? "/zh/posts" : "/posts";
+    return `${basePath}/${slug}/`;
+};
+---
+
+<Layout {...layoutProps}>
+  <Header translationUrl={translationLink?.href} />
+  <BackButton />
+  <main
+    id="main-content"
+    class:list={[
+      "mx-auto w-full max-w-app px-4 pb-12",
+      { "mt-8": !SITE.showBackButton },
+    ]}
+    data-pagefind-body
+  >
+    <h1
+      transition:name={slugifyStr(title)}
+      class="inline-block text-2xl font-bold text-accent sm:text-3xl"
+    >
+      {title}
+    </h1>
+    <div class="my-2 flex items-center gap-2">
+      <Datetime {pubDatetime} {modDatetime} {timezone} size="lg" />
+      <span
+        aria-hidden="true"
+        class:list={[
+          "max-sm:hidden",
+          { hidden: !SITE.editPost.enabled || hideEditPost },
+        ]}>|</span
+      >
+      <EditPost {hideEditPost} {post} class="max-sm:hidden" />
+    </div>
+
+    {translationLink && (
+        <div class="mt-2 mb-6 rounded-md border border-skin-line bg-skin-card/50 px-4 py-2 text-sm">
+            <a href={translationLink.href} class="flex items-center gap-1 text-skin-accent hover:underline font-medium">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 5h7" /><path d="M9 3v2c0 4.418 -2.239 8 -5 8" /><path d="M5 9c0 2.144 2.952 3.908 6.7 4" /><path d="M12 20l4 -9l4 9" /><path d="M19.1 18h-6.2" /></svg>
+                {translationLink.label}
+            </a>
+        </div>
+    )}
+
+    <article
+      id="article"
+      class="app-prose mx-auto mt-8 max-w-app prose-pre:bg-(--shiki-light-bg) dark:prose-pre:bg-(--shiki-dark-bg)"
+    >
+      <Content />
+    </article>
+
+    <hr class="my-8 border-dashed" />
+
+    <EditPost class="sm:hidden" {hideEditPost} {post} />
+
+    <ul class="mt-4 mb-8 sm:my-8">
+      {tags.map(tag => <Tag tag={slugifyStr(tag)} tagName={tag} />)}
+    </ul>
+
+    <div class="flex justify-end">
+      <BackToTopButton />
+    </div>
+
+    <hr class="my-6 border-dashed" />
+
+    <!-- Previous/Next Post Buttons -->
+    <div data-pagefind-ignore class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+      {
+        prevPost && (
+          <a
+            href={getPostUrl(prevPost)}
+            class="flex w-full gap-1 hover:opacity-75"
+          >
+            <IconChevronLeft class="inline-block flex-none rtl:rotate-180" />
+            <div>
+              <span>{t('post.prev')}</span>
+              <div class="text-sm text-accent/85">{prevPost.title}</div>
+            </div>
+          </a>
+        )
+      }
+      {
+        nextPost && (
+          <a
+            href={getPostUrl(nextPost)}
+            class="flex w-full justify-end gap-1 text-end hover:opacity-75 sm:col-start-2"
+          >
+            <div>
+              <span>{t('post.next')}</span>
+              <div class="text-sm text-accent/85">{nextPost.title}</div>
+            </div>
+            <IconChevronRight class="inline-block flex-none rtl:rotate-180" />
+          </a>
+        )
+      }
+    </div>
+  </main>
+  <Footer />
+</Layout>
+
+<script is:inline data-astro-rerun>
+  // ... (rest of the script)
+</script>

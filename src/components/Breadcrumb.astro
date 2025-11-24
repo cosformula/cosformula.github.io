@@ -1,0 +1,47 @@
+---
+import { getLangFromUrl, useTranslations } from "@/i18n/utils";
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+// Remove current url path and remove trailing slash if exists
+const currentUrlPath = Astro.url.pathname.replace(/\/+$/, "");
+
+// Get url array from path
+const breadcrumbList = currentUrlPath.split("/").slice(1).filter(p => p !== lang);
+const homePath = lang === "en" ? "/" : `/${lang}`;
+---
+
+<nav class="mx-auto mt-8 mb-1 w-full max-w-app px-4" aria-label="breadcrumb">
+  <ul
+    class="font-light [&>li]:inline [&>li:not(:last-child)>a]:hover:opacity-100"
+  >
+    <li>
+      <a href={homePath} class="opacity-80">{t('breadcrumb.home')}</a>
+      {breadcrumbList.length > 0 && <span aria-hidden="true" class="opacity-80">&raquo;</span>}
+    </li>
+    {
+      breadcrumbList.map((breadcrumb, index, arr) => {
+        // Translate segment if it's a known key
+        const translated = t(`breadcrumb.${breadcrumb}`) || breadcrumb;
+        return index + 1 === arr.length ? (
+          <li>
+            <span
+              class:list={["capitalize opacity-75"]}
+              aria-current="page"
+            >
+              {decodeURIComponent(translated)}
+            </span>
+          </li>
+        ) : (
+          <li>
+            <a href={`/${breadcrumb}/`} class="capitalize opacity-70">
+              {decodeURIComponent(translated)}
+            </a>
+            <span aria-hidden="true">&raquo;</span>
+          </li>
+        )
+      })
+    }
+  </ul>
+</nav>

@@ -1,0 +1,45 @@
+---
+import { slugifyStr } from "@/utils/slugify";
+import type { CollectionEntry } from "astro:content";
+import { getPath } from "@/utils/getPath";
+import Datetime from "./Datetime.astro";
+
+export interface Props {
+  href?: string;
+  frontmatter?: CollectionEntry<"blog">["data"];
+  secHeading?: boolean;
+  // Allow passing CollectionEntry properties directly
+  data?: CollectionEntry<"blog">["data"];
+  id?: string;
+  filePath?: string;
+  variant?: "h2" | "h3";
+}
+
+const { href, frontmatter, secHeading = true, data, id, filePath, variant = "h2" } = Astro.props;
+
+// Determine content data source (frontmatter prop or data prop from CollectionEntry)
+const content = frontmatter || data;
+const { title, description, pubDatetime, modDatetime, timezone } = content;
+
+const headerProps = {
+  style: { viewTransitionName: slugifyStr(title) },
+  class: "text-lg font-medium decoration-dashed hover:underline",
+};
+---
+
+<li class="my-6">
+  <a
+    href={href || getPath(id, filePath)}
+    class="inline-block text-lg font-medium text-accent decoration-dashed underline-offset-4 focus-visible:no-underline focus-visible:underline-offset-0"
+  >
+    {
+      variant === "h2" ? (
+        <h2 {...headerProps}>{title}</h2>
+      ) : (
+        <h3 {...headerProps}>{title}</h3>
+      )
+    }
+  </a>
+  <Datetime {pubDatetime} {modDatetime} {timezone} />
+  <p>{description}</p>
+</li>
