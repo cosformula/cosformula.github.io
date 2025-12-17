@@ -34,18 +34,35 @@ const socialImageURL = new URL(ogImage, Astro.url);
 
 const structuredData = {
   "@context": "https://schema.org",
-  "@type": "BlogPosting",
-  headline: `${title}`,
-  image: `${socialImageURL}`,
-  datePublished: `${pubDatetime?.toISOString()}`,
-  ...(modDatetime && { dateModified: modDatetime.toISOString() }),
-  author: [
+  "@graph": [
     {
-      "@type": "Person",
-      name: `${author}`,
-      ...(profile && { url: profile }),
+      "@type": "WebSite",
+      "@id": `${SITE.website}#website`,
+      "url": SITE.website,
+      "name": SITE.title,
+      "description": SITE.desc,
+      "inLanguage": SITE.lang || "en"
     },
-  ],
+    {
+      "@type": "BlogPosting",
+      "@id": `${canonicalURL}#article`,
+      "headline": title,
+      "image": `${socialImageURL}`,
+      "datePublished": pubDatetime?.toISOString(),
+      ...(modDatetime && { dateModified: modDatetime.toISOString() }),
+      "author": {
+        "@type": "Person",
+        "@id": `${SITE.website}#author`,
+        "name": author,
+        ...(profile && { url: profile })
+      },
+      "publisher": {
+        "@type": "Person",
+        "@id": `${SITE.website}#author`
+      },
+      "isPartOf": { "@id": `${SITE.website}#website` }
+    }
+  ]
 };
 ---
 
@@ -58,6 +75,11 @@ const structuredData = {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
+    
+    <!-- Preconnect to Google Fonts for faster loading -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="canonical" href={canonicalURL} />
     <meta name="generator" content={Astro.generator} />

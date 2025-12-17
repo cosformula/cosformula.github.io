@@ -1,6 +1,9 @@
 @import "tailwindcss";
 @import "./typography.css";
 
+/* Google Fonts - Inter for English, Noto Sans SC for Chinese */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap');
+
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 
 :root,
@@ -26,6 +29,7 @@ html[data-theme="dark"] {
   --color-accent: var(--accent);
   --color-muted: var(--muted);
   --color-border: var(--border);
+  --font-sans: 'Inter', 'Noto Sans SC', system-ui, -apple-system, sans-serif;
 }
 
 @layer base {
@@ -38,11 +42,11 @@ html[data-theme="dark"] {
     @apply overflow-y-scroll scroll-smooth;
   }
   body {
-    @apply flex min-h-svh flex-col bg-background font-mono text-foreground selection:bg-accent/75 selection:text-background;
+    @apply flex min-h-svh flex-col bg-background font-sans text-foreground selection:bg-accent/75 selection:text-background;
   }
   a,
   button {
-    @apply outline-offset-1 outline-accent focus-visible:no-underline focus-visible:outline-2 focus-visible:outline-dashed;
+    @apply outline-offset-1 outline-accent focus-visible:no-underline focus-visible:outline-2 focus-visible:outline-dashed transition-all duration-200;
   }
   button:not(:disabled),
   [role="button"]:not(:disabled) {
@@ -51,6 +55,58 @@ html[data-theme="dark"] {
   section,
   footer {
     @apply mx-auto max-w-app px-4;
+  }
+}
+
+/* ===== Animation Utilities ===== */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.6s ease-out forwards;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.4s ease-out forwards;
+}
+
+/* Staggered animation delays for list items */
+.animate-stagger > *:nth-child(1) { animation-delay: 0.1s; }
+.animate-stagger > *:nth-child(2) { animation-delay: 0.15s; }
+.animate-stagger > *:nth-child(3) { animation-delay: 0.2s; }
+.animate-stagger > *:nth-child(4) { animation-delay: 0.25s; }
+.animate-stagger > *:nth-child(5) { animation-delay: 0.3s; }
+
+/* ===== Dark Mode Glow Effects ===== */
+html[data-theme="dark"] {
+  /* Accent link glow on hover */
+  a.text-accent:hover,
+  a:hover .text-accent {
+    text-shadow: 0 0 12px var(--accent), 0 0 24px color-mix(in srgb, var(--accent) 50%, transparent);
+  }
+  
+  /* Button glow effect */
+  .bg-skin-accent:hover {
+    box-shadow: 0 0 16px color-mix(in srgb, var(--accent) 60%, transparent);
+  }
+  
+  /* Subtle glow for focused elements */
+  a:focus-visible,
+  button:focus-visible {
+    box-shadow: 0 0 8px color-mix(in srgb, var(--accent) 40%, transparent);
   }
 }
 
