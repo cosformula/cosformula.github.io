@@ -24,15 +24,15 @@ html[data-theme="light"] {
 html[data-theme="dark"] {
   /* 深邃蓝夜 - 深色模式 */
   --background: #0a0e1a;
-  --background-gradient: linear-gradient(135deg, #0a0e1a 0%, #0f1a2e 30%, #1a2540 60%, #0f1525 100%);
+  --background-gradient: linear-gradient(135deg, #0a0e1a 0%, #0f1a2e 50%, #0a0e1a 100%);
   --foreground: #e8f0ff;
   --accent: #4d9fff;
   --accent-rgb: 77, 159, 255;
   --muted: #1e3050;
   --border: #2a4060;
-  --glass-bg: rgba(15, 25, 45, 0.75);
-  --glass-border: rgba(100, 160, 255, 0.15);
-  --glass-shadow: rgba(0, 60, 150, 0.3);
+  --glass-bg: rgba(5, 10, 20, 0.25);
+  --glass-border: rgba(100, 160, 255, 0.1);
+  --glass-shadow: rgba(0, 0, 0, 0.3);
 }
 
 @theme inline {
