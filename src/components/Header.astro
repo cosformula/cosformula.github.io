@@ -11,7 +11,7 @@ import { SITE } from "@/config";
 import { getLangFromUrl, useTranslations } from "@/i18n/utils";
 
 export interface Props {
-  activeNav?: "posts" | "tags" | "about" | "search";
+  activeNav?: "posts" | "works" | "tags" | "about" | "search";
   translationUrl?: string;
 }
 
@@ -88,6 +88,11 @@ const homeUrl = isEnglish ? "/" : "/zh/";
           <li class="col-span-2">
             <a href={isEnglish ? "/posts" : "/zh/posts"} class:list={{ "active-nav": isActive("/posts") }}>
               {t('nav.posts')}
+            </a>
+          </li>
+          <li class="col-span-2">
+            <a href={isEnglish ? "/works" : "/zh/works"} class:list={{ "active-nav": isActive("/works") }}>
+              {t('nav.works')}
             </a>
           </li>
           {

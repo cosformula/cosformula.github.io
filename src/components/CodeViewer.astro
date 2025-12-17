@@ -31,13 +31,13 @@ const iframeContent = `<!DOCTYPE html>
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-      ${forceWhiteBackground ? `
-      html {
-        background-color: white !important;
-        color-scheme: light !important;
-      }
-      ` : ''}
+	    <style>
+	      ${forceWhiteBackground ? `
+	      html {
+	        background-color: white !important;
+	        color-scheme: light !important;
+	      }
+	      ` : ''}
       body {
         margin: 0;
         padding: 16px;
@@ -48,12 +48,12 @@ const iframeContent = `<!DOCTYPE html>
       }
       ${css}
     </style>
-  </head>
-  <body>
-    ${html}
-    ${js ? `<script>${js}</script>` : ''}
-  </body>
-</html>`;
+	  </head>
+	  <body>
+	    ${html}
+	    ${js ? `<scr` + `ipt>${js}</scr` + `ipt>` : ''}
+	  </body>
+	</html>`;
 
 // 使用 base64 编码来创建 data URL
 const dataUrl = `data:text/html;charset=utf-8,${encodeURIComponent(iframeContent)}`;

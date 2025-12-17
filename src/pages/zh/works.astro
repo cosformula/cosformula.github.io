@@ -1,0 +1,31 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import Main from "@/layouts/Main.astro";
+import WorkCard from "@/components/WorkCard.astro";
+import { SITE } from "@/config";
+
+const works = [
+  {
+    title: "MDXport",
+    href: "https://www.mdxport.com/",
+    description: "一键把 Markdown 导出为 PDF（预览 + 下载）。",
+  },
+  {
+    title: "Moon — 3D 月相",
+    href: "https://moonkit-threejs.vercel.app/",
+    description: "3D 月相。",
+  },
+] as const;
+---
+
+<Layout title={`作品 | ${SITE.title}`} description="一些项目与实验。">
+  <Header translationUrl="/works" />
+  <Main pageTitle="作品" pageDesc="一些项目与实验。">
+    <ul class="grid gap-4 sm:grid-cols-2">
+      {works.map(work => <WorkCard {...work} />)}
+    </ul>
+  </Main>
+  <Footer />
+</Layout>

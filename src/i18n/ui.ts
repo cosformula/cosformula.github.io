@@ -9,6 +9,7 @@ export const ui = {
   en: {
     'nav.title': 'Beyond Formula',
     'nav.posts': 'Posts',
+    'nav.works': 'Works',
     'nav.about': 'About',
     'nav.home': 'Home',
     'post.prev': 'Previous Post',
@@ -17,6 +18,7 @@ export const ui = {
     'pagination.next': 'Next',
     'breadcrumb.home': 'Home',
     'breadcrumb.posts': 'Posts',
+    'breadcrumb.works': 'Works',
     'breadcrumb.tags': 'Tags',
     'breadcrumb.archives': 'Archives',
     'breadcrumb.page': 'page',
@@ -32,6 +34,7 @@ export const ui = {
   zh: {
     'nav.title': '重构方圆',
     'nav.posts': '文章',
+    'nav.works': '作品',
     'nav.about': '关于',
     'nav.home': '首页',
     'post.prev': '上一篇',
@@ -40,6 +43,7 @@ export const ui = {
     'pagination.next': '下一页',
     'breadcrumb.home': '首页',
     'breadcrumb.posts': '文章',
+    'breadcrumb.works': '作品',
     'breadcrumb.tags': '标签',
     'breadcrumb.archives': '归档',
     'breadcrumb.page': '第 {0} 页',
