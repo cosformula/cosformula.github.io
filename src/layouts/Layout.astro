@@ -143,7 +143,9 @@ const structuredData = {
       href={new URL("rss.xml", Astro.site)}
     />
 
-    <meta name="theme-color" content="" />
+    <!-- Theme color for Safari and mobile browsers -->
+    <meta name="theme-color" content="#e0f0ff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0a0e1a" media="(prefers-color-scheme: dark)" />
 
     {
       // If PUBLIC_GOOGLE_SITE_VERIFICATION is set in the environment variable,
@@ -161,7 +163,7 @@ const structuredData = {
 
     <script is:inline src="/toggle-theme.js"></script>
   </head>
-  <body class="pt-24 sm:pt-28">
+  <body class="pt-20 sm:pt-24">
     <slot />
     
     <div id="lang-toast" class="fixed bottom-4 right-4 z-50 hidden glass rounded-xl p-4 transition-transform duration-300 translate-y-20 opacity-0" role="alert">
