@@ -1,8 +1,11 @@
-# Ignore Astro files
-*.astro
-
 # Ignore node_modules directory
 node_modules/
 
 # Ignore build output
 dist/
+
+# Ignore generated types
+.astro/
+
+# Ignore generated search index (copied from dist/)
+public/pagefind/
